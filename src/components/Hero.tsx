@@ -98,7 +98,7 @@ const Hero = () => {
                   </div>
                   <div>
                     <p className="text-[10px] font-bold text-white uppercase tracking-widest">Experience</p>
-                    <p className="text-white/60 text-[9px]">UI/UX & Full Stack</p>
+                    <p className="text-white/60 text-[9px]"></p>
                   </div>
                 </div>
               </div>

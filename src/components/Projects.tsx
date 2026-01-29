@@ -8,7 +8,7 @@ const Projects = () => {
       title: "THINKSHIFT",
       type: "Mobile App",
       description: "A location-intelligent reminder system built for modern efficiency.",
-      liveUrl: "https://think-shift-kappa.vercel.app/", // Replace with your actual live URLs
+      liveUrl: "https://think-shift-kappa.vercel.app/",
       technologies: ["Flutter", "Dart", "Node.js", "MongoDB"],
       githubUrl: "https://github.com/rakshak2005",
     },
@@ -30,7 +30,6 @@ const Projects = () => {
       technologies: ["Flutter", "Dart", "Node.js", "MongoDB"],
       githubUrl: "https://github.com/rakshak2005",
     },
-    
     {
       id: 4,
       title: "Shortify",
@@ -40,8 +39,6 @@ const Projects = () => {
       technologies: ["Next.js", "Express", "MongoDB", "Tailwind"],
       githubUrl: "https://github.com/rakshak2005",
     },
-    
-
   ];
 
   return (
@@ -49,16 +46,16 @@ const Projects = () => {
       <div className="max-w-7xl mx-auto px-6">
         
         <div className="flex flex-col md:flex-row justify-between items-end mb-20 gap-6">
-          <div className="max-w-xl">
+          <div className="max-w-xl w-full">
             <div className="flex items-center gap-2 text-[#d946ef] mb-4">
               <Sparkles size={18} />
               <span className="uppercase tracking-[0.3em] text-xs font-bold">Selected Works</span>
             </div>
-            <h2 className="text-5xl md:text-7xl font-black tracking-tighter leading-none">
+            <h2 className="text-4xl sm:text-5xl md:text-7xl font-black tracking-tighter leading-[0.85] md:leading-none">
               DIGITAL <br /> <span className="text-[#d946ef]">CRAFTSMANSHIP</span>
             </h2>
           </div>
-          <p className="text-slate-400 text-lg max-w-sm font-light leading-relaxed">
+          <p className="text-slate-400 text-base md:text-lg max-w-sm font-light leading-relaxed">
             Live interactive previews of systems built to solve real-world problems.
           </p>
         </div>
