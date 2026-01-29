@@ -4,7 +4,7 @@ import mainImg from '@/assets/hero.jpeg';
 
 const Hero = () => {
   const [displayText, setDisplayText] = useState("");
-  const targetText = "Full-stack Developer & Designer.";
+  const targetText = "Full-stack Web and App Developer.";
   const characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789%&#$@";
 
   useEffect(() => {

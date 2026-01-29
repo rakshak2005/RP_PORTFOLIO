@@ -32,7 +32,7 @@ const Footer = () => {
           <p>© {currentYear} Rakshak Patel V</p>
           
           <div className="flex items-center gap-2">
-            Built with <Heart size={12} className="text-[#d946ef] fill-[#d946ef]" /> 
+             
           </div>
 
           <div className="flex gap-8">
