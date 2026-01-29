@@ -28,7 +28,6 @@ const Hero = () => {
   return (
     <section id="home" className="relative min-h-screen flex items-center justify-center bg-[#050208] overflow-hidden px-6 pt-32 pb-20">
       
-      {/* Dynamic Background Elements */}
       <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full h-full pointer-events-none">
         <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] rounded-full bg-[#d946ef]/15 blur-[120px] animate-pulse" />
         <div className="absolute bottom-[10%] right-[5%] w-[30%] h-[30%] rounded-full bg-[#8b1ff5]/10 blur-[120px]" />
@@ -36,7 +35,6 @@ const Hero = () => {
 
       <div className="relative z-10 max-w-7xl w-full">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-16 items-center">
-          
           
           <div className="lg:col-span-7 text-left order-2 lg:order-1">
             <div className="inline-flex items-center gap-2 px-3 py-1 mb-8 rounded-full border border-white/10 bg-white/5 backdrop-blur-md">
@@ -90,10 +88,8 @@ const Hero = () => {
             </div>
           </div>
 
-          {/* Right Visual Column */}
           <div className="lg:col-span-5 order-1 lg:order-2 flex justify-center">
             <div className="relative group">
-              {/* Decorative elements */}
               <div className="absolute -top-6 -right-6 w-24 h-24 bg-[#d946ef]/20 rounded-full blur-2xl animate-bounce" />
               <div className="absolute -bottom-8 -left-8 p-4 rounded-2xl bg-black/80 backdrop-blur-xl border border-white/10 z-20 hidden md:block">
                 <div className="flex items-center gap-3">
@@ -107,7 +103,6 @@ const Hero = () => {
                 </div>
               </div>
 
-              {/* Main Image Container */}
               <div className="relative w-72 h-72 md:w-[400px] md:h-[500px] rounded-[3rem] overflow-hidden border border-white/10 shadow-[0_0_50px_rgba(217,70,239,0.1)]">
                 <img 
                   src={mainImg} 
@@ -117,7 +112,6 @@ const Hero = () => {
                 <div className="absolute inset-0 bg-gradient-to-t from-[#050208] via-transparent to-transparent opacity-60" />
               </div>
 
-              {/* Floating Badge */}
               <div className="absolute top-1/2 -right-12 -translate-y-1/2 rotate-90 hidden md:block">
                 <span className="text-[10px] font-black uppercase tracking-[0.5em] text-white/20 whitespace-nowrap border-b border-white/10 pb-2">
                 </span>
@@ -127,7 +121,6 @@ const Hero = () => {
         </div>
       </div>
 
-      {/* Scroll Indicator */}
       <div className="absolute bottom-10 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 opacity-30">
         <div className="w-[1px] h-12 bg-gradient-to-b from-[#d946ef] to-transparent" />
         <span className="text-[8px] font-bold uppercase tracking-[0.3em] text-white rotate-90 mt-4">Scroll</span>
