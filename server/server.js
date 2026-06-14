@@ -4,6 +4,13 @@ import cors from 'cors';
 import dotenv from 'dotenv';
 import path from 'path';
 import fs from 'fs';
+import dns from 'dns';
+
+try {
+  dns.setServers(['8.8.8.8', '1.1.1.1']);
+} catch (err) {
+  console.warn('Could not set DNS servers, proceeding with default:', err);
+}
 
 // Import routes
 import authRoutes from './routes/auth.js';
