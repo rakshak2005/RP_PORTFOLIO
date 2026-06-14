@@ -1,5 +1,6 @@
 import React from 'react';
-import { ArrowUp, Sparkles, Heart } from 'lucide-react';
+import { Link } from 'react-router-dom';
+import { ArrowUp, Sparkles, Heart, Lock } from 'lucide-react';
 
 const Footer = () => {
   const currentYear = new Date().getFullYear();
@@ -32,7 +33,13 @@ const Footer = () => {
           <p>© {currentYear} Rakshak Patel V</p>
           
           <div className="flex items-center gap-2">
-             
+            <Link 
+              to="/admin/login" 
+              className="p-2 rounded-full border border-white/0 hover:border-white/5 hover:bg-white/[0.02] text-slate-600 hover:text-white transition-all duration-300"
+              title="Admin Login"
+            >
+              <Lock size={12} />
+            </Link>
           </div>
 
           <div className="flex gap-8">

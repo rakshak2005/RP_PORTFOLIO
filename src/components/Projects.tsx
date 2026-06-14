@@ -1,45 +1,67 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { ExternalLink, Github, Sparkles, Globe } from 'lucide-react';
+import { API_URL } from '../config';
 
 const Projects = () => {
-  const projects = [
+  const staticProjects = [
     {
-      id: 1,
+      _id: "1",
       title: "THINKSHIFT",
-      type: "Mobile App",
+      category: "Mobile App",
       description: "A location-intelligent reminder system built for modern efficiency.",
-      liveUrl: "https://think-shift-kappa.vercel.app/",
+      demoLink: "https://think-shift-kappa.vercel.app/",
       technologies: ["Flutter", "Dart", "Node.js", "MongoDB"],
-      githubUrl: "https://github.com/rakshak2005",
+      githubLink: "https://github.com/rakshak2005",
+      image: ""
     },
     {
-      id: 2,
+      _id: "2",
       title: "Campus Connect",
-      type: "AI Platform",
+      category: "AI Platform",
       description: "Intelligent college ecosystem powered by large language models.",
-      liveUrl: "https://amc-campus-connect-real-c6qg.vercel.app/",
+      demoLink: "https://amc-campus-connect-real-c6qg.vercel.app/",
       technologies: ["React", "MERN Stack", "OpenAI API"],
-      githubUrl: "https://github.com/rakshak2005",
+      githubLink: "https://github.com/rakshak2005",
+      image: ""
     },
     {
-      id: 3,
+      _id: "3",
       title: "SHIKSHA SETHU",
-      type: "Mobile App",
+      category: "Mobile App",
       description: "A location-intelligent reminder system built for modern efficiency.",
-      liveUrl: "https://siksha-sethu.vercel.app/", 
+      demoLink: "https://siksha-sethu.vercel.app/", 
       technologies: ["Flutter", "Dart", "Node.js", "MongoDB"],
-      githubUrl: "https://github.com/rakshak2005",
+      githubLink: "https://github.com/rakshak2005",
+      image: ""
     },
     {
-      id: 4,
+      _id: "4",
       title: "Shortify",
-      type: "SaaS Tool",
+      category: "SaaS Tool",
       description: "Advanced URL shortening with real-time analytics and QR generation.",
-      liveUrl: "https://shortify-url-shortner-ctap.vercel.app/",
+      demoLink: "https://shortify-url-shortner-ctap.vercel.app/",
       technologies: ["Next.js", "Express", "MongoDB", "Tailwind"],
-      githubUrl: "https://github.com/rakshak2005",
+      githubLink: "https://github.com/rakshak2005",
+      image: ""
     },
   ];
+
+  const [projects, setProjects] = useState<any[]>([]);
+
+  useEffect(() => {
+    fetch(`${API_URL}/api/projects`)
+      .then(res => res.ok ? res.json() : null)
+      .then(data => {
+        if (data && data.length > 0) {
+          setProjects(data.filter((p: any) => !p.isHidden));
+        } else {
+          setProjects(staticProjects);
+        }
+      })
+      .catch(() => {
+        setProjects(staticProjects);
+      });
+  }, []);
 
   return (
     <section id="projects" className="py-32 bg-[#050208] text-white overflow-hidden">
@@ -63,54 +85,68 @@ const Projects = () => {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
           {projects.map((project) => (
             <div 
-              key={project.id}
+              key={project._id}
               className="group relative flex flex-col bg-[#0a0510] border border-white/5 overflow-hidden transition-all duration-500 hover:border-[#d946ef]/30"
             >
               <div className="relative aspect-video w-full bg-black overflow-hidden border-b border-white/5">
                 <div className="absolute inset-0 z-20 pointer-events-none bg-gradient-to-b from-transparent via-transparent to-[#0a0510] opacity-0 group-hover:opacity-100 transition-opacity duration-700" />
                 
-                <div className="absolute inset-0 z-10 bg-[#050208]/50 backdrop-blur-sm group-hover:backdrop-blur-none group-hover:bg-transparent transition-all duration-1000 flex items-center justify-center">
-                  <div className="flex flex-col items-center gap-3 group-hover:opacity-0 transition-opacity duration-500">
-                    <Globe className="text-[#d946ef] animate-pulse" size={32} />
-                    <span className="text-[10px] uppercase tracking-[0.4em] font-bold">Hover to explore live</span>
-                  </div>
-                </div>
+                {project.image ? (
+                  <img 
+                    src={project.image.startsWith('/uploads') ? `${API_URL}${project.image}` : project.image}
+                    alt={project.title}
+                    className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+                  />
+                ) : (
+                  <>
+                    <div className="absolute inset-0 z-10 bg-[#050208]/50 backdrop-blur-sm group-hover:backdrop-blur-none group-hover:bg-transparent transition-all duration-1000 flex items-center justify-center">
+                      <div className="flex flex-col items-center gap-3 group-hover:opacity-0 transition-opacity duration-500">
+                        <Globe className="text-[#d946ef] animate-pulse" size={32} />
+                        <span className="text-[10px] uppercase tracking-[0.4em] font-bold">Hover to explore live</span>
+                      </div>
+                    </div>
 
-                <iframe 
-                  src={project.liveUrl}
-                  title={project.title}
-                  className="w-[1280px] h-[720px] origin-top-left scale-[0.3] md:scale-[0.45] lg:scale-[0.5] pointer-events-none group-hover:pointer-events-auto transition-transform duration-700"
-                  loading="lazy"
-                />
+                    <iframe 
+                      src={project.demoLink}
+                      title={project.title}
+                      className="w-[1280px] h-[720px] origin-top-left scale-[0.3] md:scale-[0.45] lg:scale-[0.5] pointer-events-none group-hover:pointer-events-auto transition-transform duration-700"
+                      loading="lazy"
+                    />
+                  </>
+                )}
               </div>
 
               <div className="p-10">
                 <div className="flex justify-between items-start mb-6">
                   <div>
                     <span className="text-[#d946ef] text-[10px] font-black tracking-widest uppercase mb-2 block">
-                      {project.type}
+                      {project.category}
                     </span>
                     <h3 className="text-4xl font-bold tracking-tighter">
                       {project.title}
                     </h3>
                   </div>
                   <div className="flex gap-4">
-                    <a 
-                      href={project.githubUrl} 
-                      className="p-3 rounded-full bg-white/5 hover:bg-[#d946ef] hover:text-black transition-all"
-                      target="_blank"
-                      rel="noreferrer"
-                    >
-                      <Github size={20} />
-                    </a>
-                    <a 
-                      href={project.liveUrl} 
-                      className="p-3 rounded-full bg-white/5 hover:bg-[#d946ef] hover:text-black transition-all"
-                      target="_blank"
-                      rel="noreferrer"
-                    >
-                      <ExternalLink size={20} />
-                    </a>
+                    {project.githubLink && (
+                      <a 
+                        href={project.githubLink} 
+                        className="p-3 rounded-full bg-white/5 hover:bg-[#d946ef] hover:text-black transition-all"
+                        target="_blank"
+                        rel="noreferrer"
+                      >
+                        <Github size={20} />
+                      </a>
+                    )}
+                    {project.demoLink && (
+                      <a 
+                        href={project.demoLink} 
+                        className="p-3 rounded-full bg-white/5 hover:bg-[#d946ef] hover:text-black transition-all"
+                        target="_blank"
+                        rel="noreferrer"
+                      >
+                        <ExternalLink size={20} />
+                      </a>
+                    )}
                   </div>
                 </div>
 
@@ -119,7 +155,7 @@ const Projects = () => {
                 </p>
 
                 <div className="flex flex-wrap gap-2">
-                  {project.technologies.map((tech) => (
+                  {project.technologies?.map((tech: string) => (
                     <span 
                       key={tech}
                       className="text-[9px] font-mono px-3 py-1 bg-white/5 border border-white/10 text-slate-300 uppercase tracking-tighter"

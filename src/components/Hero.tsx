@@ -1,11 +1,32 @@
 import React, { useState, useEffect } from 'react';
 import { Github, Linkedin, Instagram, Twitter, Download, Sparkles, MousePointer2 } from 'lucide-react';
 import mainImg from '@/assets/hero.jpeg';
+import { API_URL } from '../config';
 
 const Hero = () => {
+  const [heroData, setHeroData] = useState({
+    greeting: "I'M",
+    name: "RAKSHAK",
+    subtitle: "Full-stack Web and App Developer.",
+    description: "Engineering high-performance digital architectures where logic meets aesthetics. Specializing in scalable full-stack ecosystems.",
+    resumeLink: "https://drive.google.com/file/d/18c-63HXD1zYQ7wdPW5LrmUAqtdhCqF6z/view?usp=sharing",
+    githubLink: "https://github.com/rakshak2005",
+    linkedinLink: "https://www.linkedin.com/in/rakshak-patel-v-12b2b624a",
+    instagramLink: "https://www.instagram.com/rakshak_2005",
+    openForProjects: true
+  });
   const [displayText, setDisplayText] = useState("");
-  const targetText = "Full-stack Web and App Developer.";
+  const targetText = heroData.subtitle;
   const characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789%&#$@";
+
+  useEffect(() => {
+    fetch(`${API_URL}/api/hero`)
+      .then(res => res.ok ? res.json() : null)
+      .then(data => {
+        if (data) setHeroData(data);
+      })
+      .catch(() => { /* Graceful fallback */ });
+  }, []);
 
   useEffect(() => {
     let iteration = 0;
@@ -23,7 +44,7 @@ const Hero = () => {
       iteration += 1 / 3; 
     }, 30);
     return () => clearInterval(interval);
-  }, []);
+  }, [targetText]);
 
   return (
     <section id="home" className="relative min-h-screen flex items-center justify-center bg-[#050208] overflow-hidden px-6 pt-32 pb-20">
@@ -37,14 +58,16 @@ const Hero = () => {
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-16 items-center">
           
           <div className="lg:col-span-7 text-left order-2 lg:order-1">
-            <div className="inline-flex items-center gap-2 px-3 py-1 mb-8 rounded-full border border-white/10 bg-white/5 backdrop-blur-md">
-              <div className="w-2 h-2 rounded-full bg-green-500 animate-ping" />
-              <span className="text-white/70 text-[10px] font-bold uppercase tracking-[0.2em]">Open for new projects</span>
-            </div>
+            {heroData.openForProjects && (
+              <div className="inline-flex items-center gap-2 px-3 py-1 mb-8 rounded-full border border-white/10 bg-white/5 backdrop-blur-md">
+                <div className="w-2 h-2 rounded-full bg-green-500 animate-ping" />
+                <span className="text-white/70 text-[10px] font-bold uppercase tracking-[0.2em]">Open for new projects</span>
+              </div>
+            )}
 
             <h1 className="text-6xl md:text-8xl font-black text-white tracking-tighter leading-[0.9] mb-6">
-              I&apos;M <br />
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#d946ef] to-[#8b1ff5]">RAKSHAK</span>
+              {heroData.greeting} <br />
+              <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#d946ef] to-[#8b1ff5]">{heroData.name}</span>
             </h1>
 
             <h2 className="text-xl md:text-3xl font-mono text-slate-300 min-h-[1.5em] mb-8">
@@ -52,29 +75,30 @@ const Hero = () => {
             </h2>
 
             <p className="text-slate-400 text-lg md:text-xl max-w-xl leading-relaxed font-light mb-12">
-              Engineering high-performance digital architectures where 
-              <span className="text-white font-medium"> logic meets aesthetics.</span> Specializing in scalable full-stack ecosystems.
+              {heroData.description}
             </p>
 
             <div className="flex flex-wrap items-center gap-6">
-              <a
-                href="https://drive.google.com/file/d/18c-63HXD1zYQ7wdPW5LrmUAqtdhCqF6z/view?usp=sharing"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="group relative px-8 py-5 overflow-hidden rounded-full bg-white text-black font-black uppercase tracking-widest text-xs transition-all duration-500"
-              >
-                <div className="absolute inset-0 bg-[#d946ef] translate-y-full group-hover:translate-y-0 transition-transform duration-500" />
-                <span className="relative z-10 flex items-center gap-2 group-hover:text-white">
-                  Download Resume <Download size={16} />
-                </span>
-              </a>
+              {heroData.resumeLink && (
+                <a
+                  href={heroData.resumeLink}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="group relative px-8 py-5 overflow-hidden rounded-full bg-white text-black font-black uppercase tracking-widest text-xs transition-all duration-500"
+                >
+                  <div className="absolute inset-0 bg-[#d946ef] translate-y-full group-hover:translate-y-0 transition-transform duration-500" />
+                  <span className="relative z-10 flex items-center gap-2 group-hover:text-white">
+                    Download Resume <Download size={16} />
+                  </span>
+                </a>
+              )}
 
               <div className="flex items-center gap-4">
                 {[
-                  { icon: <Linkedin size={20} />, link: "https://www.linkedin.com/in/rakshak-patel-v-12b2b624a" },
-                  { icon: <Github size={20} />, link: "https://github.com/rakshak2005" },
-                  { icon: <Instagram size={20} />, link: "https://www.instagram.com/rakshak_2005" }
-                ].map((social, i) => (
+                  { icon: <Linkedin size={20} />, link: heroData.linkedinLink },
+                  { icon: <Github size={20} />, link: heroData.githubLink },
+                  { icon: <Instagram size={20} />, link: heroData.instagramLink }
+                ].filter(social => social.link).map((social, i) => (
                   <a
                     key={i}
                     href={social.link}

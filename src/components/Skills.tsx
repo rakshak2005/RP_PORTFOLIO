@@ -1,13 +1,104 @@
-import React, { useEffect, useRef } from 'react';
-import { 
-  Code2, Server, Smartphone, GitBranch, Zap,
-  Layers, Database, Cpu, Globe, Terminal, Box, SmartphoneNfc
-} from 'lucide-react';
+import React, { useEffect, useRef, useState } from 'react';
+import * as Lucide from 'lucide-react';
+import { API_URL } from '../config';
 
 const Skills = () => {
   const containerRef = useRef<HTMLDivElement>(null);
+  
+  const staticStack = [
+    { 
+      title: "Frontend", 
+      icon: <Lucide.Layers className="text-[#d946ef]" size={28} />, 
+      skills: [
+        { name: "Next.js", icon: <Lucide.Globe size={14} /> },
+        { name: "React", icon: <Lucide.Cpu size={14} /> },
+        { name: "TypeScript", icon: <Lucide.Code2 size={14} /> },
+        { name: "Tailwind", icon: <Lucide.Layers size={14} /> },
+        { name: "HTML5/CSS3", icon: <Lucide.Terminal size={14} /> },
+        { name: "EJS", icon: <Lucide.Code2 size={14} /> }
+      ], 
+      side: "left" 
+    },
+    { 
+      title: "Backend", 
+      icon: <Lucide.Database className="text-[#8b1ff5]" size={28} />, 
+      skills: [
+        { name: "Node.js", icon: <Lucide.Server size={14} /> },
+        { name: "Express", icon: <Lucide.Zap size={14} /> },
+        { name: "MongoDB", icon: <Lucide.Database size={14} /> },
+        { name: "Mongoose", icon: <Lucide.Box size={14} /> },
+        { name: "Multer", icon: <Lucide.Terminal size={14} /> },
+        { name: "Firebase", icon: <Lucide.Globe size={14} /> },
+        { name: "MySQL", icon: <Lucide.Database size={14} /> },
+        { name: "JWT", icon: <Lucide.Terminal size={14} /> }
+      ], 
+      side: "right" 
+    },
+    { 
+      title: "App Dev", 
+      icon: <Lucide.SmartphoneNfc className="text-[#d946ef]" size={28} />, 
+      skills: [
+        { name: "Flutter", icon: <Lucide.Smartphone size={14} /> },
+        { name: "Dart", icon: <Lucide.Code2 size={14} /> },
+        { name: "Android", icon: <Lucide.Smartphone size={14} /> },
+        { name: "iOS", icon: <Lucide.Smartphone size={14} /> }
+      ], 
+      side: "left" 
+    },
+    { 
+      title: "Tools & Cloud", 
+      icon: <Lucide.GitBranch className="text-[#8b1ff5]" size={28} />, 
+      skills: [
+        { name: "Git/GitHub", icon: <Lucide.GitBranch size={14} /> },
+        { name: "Vercel", icon: <Lucide.Globe size={14} /> },
+        { name: "Netlify", icon: <Lucide.Globe size={14} /> },
+        { name: "Figma", icon: <Lucide.Layers size={14} /> },
+        { name: "Canva", icon: <Lucide.Layers size={14} /> },
+        { name: "Power BI", icon: <Lucide.Database size={14} /> }
+      ], 
+      side: "right" 
+    }
+  ];
+
+  const [stack, setStack] = useState<any[]>([]);
 
   useEffect(() => {
+    fetch(`${API_URL}/api/skills`)
+      .then(res => res.ok ? res.json() : null)
+      .then(data => {
+        if (data && data.length > 0) {
+          setStack(data);
+        } else {
+          setStack(staticStack);
+        }
+      })
+      .catch(() => {
+        setStack(staticStack);
+      });
+  }, []);
+
+  const renderLucideIcon = (name: string, size = 14, className = "") => {
+    const IconComponent = (Lucide as any)[name];
+    if (IconComponent) {
+      return <IconComponent size={size} className={className} />;
+    }
+    return <Lucide.Code2 size={size} className={className} />;
+  };
+
+  const getCategoryIcon = (item: any) => {
+    if (React.isValidElement(item.icon)) return item.icon;
+    const colorClass = item.title === 'Backend' || item.title === 'Tools & Cloud' ? 'text-[#8b1ff5]' : 'text-[#d946ef]';
+    return renderLucideIcon(item.icon, 28, colorClass);
+  };
+
+  const getSkillIcon = (s: any) => {
+    if (React.isValidElement(s.icon)) return s.icon;
+    return renderLucideIcon(s.icon, 14);
+  };
+
+  useEffect(() => {
+    if (stack.length === 0) return;
+    
     const observer = new IntersectionObserver(
       (entries) => {
         entries.forEach((entry) => {
@@ -29,62 +120,7 @@ const Skills = () => {
     }
 
     return () => observer.disconnect();
-  }, []);
-
-  const stack = [
-    { 
-      title: "Frontend", 
-      icon: <Layers className="text-[#d946ef]" size={28} />, 
-      skills: [
-        { name: "Next.js", icon: <Globe size={14} /> },
-        { name: "React", icon: <Cpu size={14} /> },
-        { name: "TypeScript", icon: <Code2 size={14} /> },
-        { name: "Tailwind", icon: <Layers size={14} /> },
-        { name: "HTML5/CSS3", icon: <Terminal size={14} /> },
-        { name: "EJS", icon: <Code2 size={14} /> }
-      ], 
-      side: "left" 
-    },
-    { 
-      title: "Backend", 
-      icon: <Database className="text-[#8b1ff5]" size={28} />, 
-      skills: [
-        { name: "Node.js", icon: <Server size={14} /> },
-        { name: "Express", icon: <Zap size={14} /> },
-        { name: "MongoDB", icon: <Database size={14} /> },
-        { name: "Mongoose", icon: <Box size={14} /> },
-        { name: "Multer", icon: <Terminal size={14} /> },
-        { name: "Firebase", icon: <Globe size={14} /> },
-        { name: "MySQL", icon: <Database size={14} /> },
-        { name: "JWT", icon: <Terminal size={14} /> }
-      ], 
-      side: "right" 
-    },
-    { 
-      title: "App Dev", 
-      icon: <SmartphoneNfc className="text-[#d946ef]" size={28} />, 
-      skills: [
-        { name: "Flutter", icon: <Smartphone size={14} /> },
-        { name: "Dart", icon: <Code2 size={14} /> },
-        { name: "Android", icon: <Smartphone size={14} /> },
-        { name: "iOS", icon: <Smartphone size={14} /> }
-      ], 
-      side: "left" 
-    },
-    { 
-      title: "Tools & Cloud", 
-      icon: <GitBranch className="text-[#8b1ff5]" size={28} />, 
-      skills: [
-        { name: "Git/GitHub", icon: <GitBranch size={14} /> },
-        { name: "Vercel", icon: <Globe size={14} /> },
-        { name: "Netlify", icon: <Globe size={14} /> },
-        { name: "Figma", icon: <Layers size={14} /> },
-        { name: "Canva", icon: <Layers size={14} /> },
-        { name: "Power BI", icon: <Database size={14} /> }
-      ], 
-      side: "right" 
-    }
-  ];
+  }, [stack]);
 
   const outlineStyle = {
     color: 'transparent',
@@ -97,7 +133,7 @@ const Skills = () => {
         
         <div className="flex flex-col items-center mb-16">
           <div className="flex items-center gap-3 mb-2">
-            <Zap className="text-[#d946ef] fill-[#d946ef]" size={16} />
+            <Lucide.Zap className="text-[#d946ef] fill-[#d946ef]" size={16} />
             <span className="uppercase tracking-[0.4em] text-[10px] font-bold text-slate-500">Professional Toolkit</span>
           </div>
           <h2 className="text-5xl md:text-7xl font-black tracking-tighter text-center italic">
@@ -111,7 +147,7 @@ const Skills = () => {
           <div className="space-y-10 md:space-y-6">
             {stack.map((item, i) => (
               <div 
-                key={item.title} 
+                key={item.title || i} 
                 data-side={item.side}
                 style={{ 
                   transitionDuration: '3000ms', 
@@ -125,15 +161,15 @@ const Skills = () => {
                 <div className={`w-full md:w-[44%] p-6 rounded-3xl bg-white/[0.02] border border-white/5 backdrop-blur-sm flex flex-col ${item.side === 'left' ? 'md:items-end md:text-right' : 'md:items-start md:text-left'}`}>
                   <div className={`flex items-center gap-4 mb-4 ${item.side === 'right' ? 'flex-row' : 'flex-row-reverse'}`}>
                     <div className="p-3 bg-[#d946ef]/10 rounded-2xl border border-[#d946ef]/20">
-                      {item.icon}
+                      {getCategoryIcon(item)}
                     </div>
                     <h3 className="text-2xl font-black uppercase italic tracking-tight">{item.title}</h3>
                   </div>
                   
                   <div className={`flex flex-wrap gap-2 ${item.side === 'left' ? 'justify-end' : 'justify-start'}`}>
-                    {item.skills.map(s => (
-                      <span key={s.name} className="flex items-center gap-2 px-3 py-2 text-[10px] font-bold uppercase tracking-wider border border-white/10 rounded-xl bg-black/40 hover:border-[#d946ef]/50 hover:bg-[#d946ef]/5 transition-all group">
-                        <span className="text-[#d946ef] opacity-50 group-hover:opacity-100">{s.icon}</span>
+                    {item.skills?.map((s: any, idx: number) => (
+                      <span key={s.name || idx} className="flex items-center gap-2 px-3 py-2 text-[10px] font-bold uppercase tracking-wider border border-white/10 rounded-xl bg-black/40 hover:border-[#d946ef]/50 hover:bg-[#d946ef]/5 transition-all group">
+                        <span className="text-[#d946ef] opacity-50 group-hover:opacity-100">{getSkillIcon(s)}</span>
                         {s.name}
                       </span>
                     ))}
