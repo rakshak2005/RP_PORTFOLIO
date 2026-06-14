@@ -102,7 +102,7 @@ const seedData = async () => {
     const companies = [
       {
         company: "AMILO AI Pvt Ltd",
-        logo: "/src/assets/amilo_ai.png",
+        logo: "/amilo_ai.png",
         badge: "Industry Projects",
         role: "Project Developer",
         timeline: "Practical Experience",
@@ -114,7 +114,7 @@ const seedData = async () => {
       },
       {
         company: "Pentagon Space",
-        logo: "/src/assets/pentagon_space.png",
+        logo: "/pentagon_space.png",
         badge: "Selected Candidate",
         role: "Trainee Software Engineer",
         timeline: "Selection Merit",
