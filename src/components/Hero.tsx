@@ -36,6 +36,7 @@ const Hero = () => {
       setDisplayText(prev =>
         targetText.split("")
           .map((letter, index) => {
+            if (letter === " ") return " ";
             if (index < iteration) return targetText[index];
             return characters[Math.floor(Math.random() * characters.length)];
           })
@@ -43,7 +44,7 @@ const Hero = () => {
       );
 
       if (iteration >= targetText.length) clearInterval(interval);
-      iteration += 1 / 3;
+      iteration += 1;
     }, 30);
     return () => clearInterval(interval);
   }, [targetText]);
