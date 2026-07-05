@@ -62,7 +62,7 @@ const Hero = () => {
   };
 
   return (
-    <section id="home" className="relative h-screen min-h-[680px] lg:min-h-0 flex items-center justify-center bg-[#050208] overflow-hidden px-6 pt-20 lg:pt-16 pb-10">
+    <section id="home" className="relative min-h-screen lg:h-screen flex items-start lg:items-center justify-center bg-[#050208] overflow-hidden px-6 pt-32 sm:pt-36 lg:pt-16 pb-12">
 
       {/* Background glow layers */}
       <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full h-full pointer-events-none">
