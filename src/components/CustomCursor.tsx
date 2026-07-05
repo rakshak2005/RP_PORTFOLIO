@@ -1,24 +1,21 @@
-import { useEffect, useState, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 interface Particle {
-  id: number;
   x: number;
   y: number;
   vx: number;
   vy: number;
   size: number;
-  opacity: number;
+  alpha: number;
+  color: string;
 }
 
 const CustomCursor = () => {
-  const [position, setPosition] = useState({ x: 0, y: 0 });
-  const [isHovered, setIsHovered] = useState(false);
-  const [isHidden, setIsHidden] = useState(true);
+  const canvasRef = useRef<HTMLCanvasElement | null>(null);
+  const mouseRef = useRef({ x: 0, y: 0, lastX: 0, lastY: 0 });
   const [hasHover, setHasHover] = useState(false);
-  const [particles, setParticles] = useState<Particle[]>([]);
-  
-  const lastPosition = useRef({ x: 0, y: 0 });
-  const particleIdRef = useRef(0);
+  const isHoveredRef = useRef(false);
+  const isHiddenRef = useRef(true);
 
   // Check if device supports hover (disabled on touch devices)
   useEffect(() => {
@@ -33,88 +30,7 @@ const CustomCursor = () => {
     return () => mediaQuery.removeEventListener('change', handleChange);
   }, []);
 
-  // Update mouse position and spawn particles on movement
-  useEffect(() => {
-    if (!hasHover) return;
-
-    const handleMouseMove = (e: MouseEvent) => {
-      const { clientX: x, clientY: y } = e;
-      setPosition({ x, y });
-      setIsHidden(false);
-
-      // Distance moved since last particle spawn
-      const dx = x - lastPosition.current.x;
-      const dy = y - lastPosition.current.y;
-      const distance = Math.sqrt(dx * dx + dy * dy);
-
-      // Spawn a particle if the mouse moved at least 8 pixels (for performance and clean visuals)
-      if (distance > 8) {
-        const count = isHovered ? 2 : 1; // More particles when hovering
-        const newParticles: Particle[] = [];
-
-        for (let i = 0; i < count; i++) {
-          particleIdRef.current += 1;
-          newParticles.push({
-            id: particleIdRef.current,
-            x: x + (Math.random() - 0.5) * 4,
-            y: y + (Math.random() - 0.5) * 4,
-            // Small initial outward velocity
-            vx: (Math.random() - 0.5) * 2,
-            vy: (Math.random() - 0.5) * 2 + 1, // slight downward drift
-            size: Math.random() * 3 + 2, // 2px to 5px
-            opacity: 0.8,
-          });
-        }
-
-        setParticles((prev) => [...prev, ...newParticles].slice(-40)); // Cap particles array size for safety
-        lastPosition.current = { x, y };
-      }
-    };
-
-    const handleMouseLeave = () => {
-      setIsHidden(true);
-    };
-
-    const handleMouseEnter = () => {
-      setIsHidden(false);
-    };
-
-    window.addEventListener('mousemove', handleMouseMove);
-    document.addEventListener('mouseleave', handleMouseLeave);
-    document.addEventListener('mouseenter', handleMouseEnter);
-
-    return () => {
-      window.removeEventListener('mousemove', handleMouseMove);
-      document.removeEventListener('mouseleave', handleMouseLeave);
-      document.removeEventListener('mouseenter', handleMouseEnter);
-    };
-  }, [hasHover, isHovered]);
-
-  // Particle animation loop using requestAnimationFrame
-  useEffect(() => {
-    if (!hasHover) return;
-    let animationFrameId: number;
-
-    const animateParticles = () => {
-      setParticles((prevParticles) =>
-        prevParticles
-          .map((p) => ({
-            ...p,
-            x: p.x + p.vx,
-            y: p.y + p.vy,
-            opacity: p.opacity - 0.03, // Fade out rate
-            size: Math.max(0, p.size - 0.05), // Shrink size slightly
-          }))
-          .filter((p) => p.opacity > 0)
-      );
-      animationFrameId = requestAnimationFrame(animateParticles);
-    };
-
-    animationFrameId = requestAnimationFrame(animateParticles);
-    return () => cancelAnimationFrame(animationFrameId);
-  }, [hasHover]);
-
-  // Detect interactive elements for hover effects
+  // Track hover status on interactive elements
   useEffect(() => {
     if (!hasHover) return;
 
@@ -131,7 +47,7 @@ const CustomCursor = () => {
         target.classList.contains('cursor-pointer') ||
         window.getComputedStyle(target).cursor === 'pointer';
 
-      setIsHovered(!!isInteractive);
+      isHoveredRef.current = !!isInteractive;
     };
 
     window.addEventListener('mouseover', handleMouseOver);
@@ -140,53 +56,154 @@ const CustomCursor = () => {
     };
   }, [hasHover]);
 
-  if (!hasHover || isHidden) return null;
+  // Main rendering loop (bypasses React state updates entirely for maximum performance)
+  useEffect(() => {
+    if (!hasHover) return;
+
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+
+    const ctx = canvas.getContext('2d');
+    if (!ctx) return;
+
+    // Handle resizing to match viewport size exactly
+    const handleResize = () => {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+    };
+    window.addEventListener('resize', handleResize);
+    handleResize();
+
+    let particles: Particle[] = [];
+    let animationFrameId: number;
+
+    const handleMouseMove = (e: MouseEvent) => {
+      mouseRef.current.x = e.clientX;
+      mouseRef.current.y = e.clientY;
+      isHiddenRef.current = false;
+    };
+
+    const handleMouseLeave = () => {
+      isHiddenRef.current = true;
+    };
+
+    const handleMouseEnter = () => {
+      isHiddenRef.current = false;
+    };
+
+    window.addEventListener('mousemove', handleMouseMove);
+    document.addEventListener('mouseleave', handleMouseLeave);
+    document.addEventListener('mouseenter', handleMouseEnter);
+
+    // Dynamic core position easing
+    const corePos = { x: 0, y: 0 };
+
+    const render = () => {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+      if (!isHiddenRef.current) {
+        const mouse = mouseRef.current;
+
+        // Smooth easing for the laser core (reduces jitter/stuttering)
+        corePos.x += (mouse.x - corePos.x) * 0.4;
+        corePos.y += (mouse.y - corePos.y) * 0.4;
+
+        // Generate particles based on movement distance
+        const dx = mouse.x - mouse.lastX;
+        const dy = mouse.y - mouse.lastY;
+        const speed = Math.sqrt(dx * dx + dy * dy);
+
+        if (speed > 2) {
+          const spawnCount = isHoveredRef.current ? 2 : 1;
+          const color = isHoveredRef.current ? '#8b1ff5' : '#d946ef';
+
+          for (let i = 0; i < spawnCount; i++) {
+            particles.push({
+              x: mouse.x + (Math.random() - 0.5) * 4,
+              y: mouse.y + (Math.random() - 0.5) * 4,
+              vx: (Math.random() - 0.5) * 1.5,
+              vy: (Math.random() - 0.5) * 1.5 + 0.5, // slight downward drift
+              size: Math.random() * 2.5 + 1.5,
+              alpha: 0.8,
+              color,
+            });
+          }
+        }
+
+        // Update tracking values
+        mouse.lastX = mouse.x;
+        mouse.lastY = mouse.y;
+
+        // Update and draw trailing particles
+        particles = particles.map((p) => {
+          p.x += p.vx;
+          p.y += p.vy;
+          p.alpha -= 0.025; // Slow, smooth fade out
+          p.size = Math.max(0, p.size - 0.05); // Smooth shrink
+          return p;
+        }).filter((p) => p.alpha > 0);
+
+        particles.forEach((p) => {
+          ctx.save();
+          ctx.globalAlpha = p.alpha;
+          ctx.beginPath();
+          ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+          ctx.fillStyle = p.color;
+          // Soft neon glow effect on canvas
+          ctx.shadowBlur = 10;
+          ctx.shadowColor = p.color;
+          ctx.fill();
+          ctx.restore();
+        });
+
+        // Draw Core Laser Dot
+        const coreSize = isHoveredRef.current ? 10 : 4;
+        const coreColor = isHoveredRef.current ? '#3b82f6' : '#d946ef';
+        const glowColor = isHoveredRef.current ? '#8b1ff5' : '#d946ef';
+
+        ctx.save();
+        ctx.beginPath();
+        ctx.arc(corePos.x, corePos.y, coreSize, 0, Math.PI * 2);
+        ctx.fillStyle = coreColor;
+        ctx.shadowBlur = isHoveredRef.current ? 22 : 12;
+        ctx.shadowColor = glowColor;
+        ctx.fill();
+
+        // Draw white border for hovered targets
+        if (isHoveredRef.current) {
+          ctx.strokeStyle = '#ffffff';
+          ctx.lineWidth = 1.5;
+          ctx.stroke();
+        }
+        ctx.restore();
+      }
+
+      animationFrameId = requestAnimationFrame(render);
+    };
+
+    render();
+
+    return () => {
+      window.removeEventListener('resize', handleResize);
+      window.removeEventListener('mousemove', handleMouseMove);
+      document.removeEventListener('mouseleave', handleMouseLeave);
+      document.removeEventListener('mouseenter', handleMouseEnter);
+      cancelAnimationFrame(animationFrameId);
+    };
+  }, [hasHover]);
+
+  if (!hasHover) return null;
 
   return (
     <>
-      {/* Hide native cursor globally */}
       <style>{`
         * {
           cursor: none !important;
         }
       `}</style>
-
-      {/* Cyberpunk Laser Dot Particles */}
-      {particles.map((p) => (
-        <div
-          key={p.id}
-          className="fixed rounded-full pointer-events-none z-[9998]"
-          style={{
-            left: `${p.x}px`,
-            top: `${p.y}px`,
-            width: `${p.size}px`,
-            height: `${p.size}px`,
-            transform: 'translate(-50%, -50%)',
-            opacity: p.opacity,
-            background: isHovered 
-              ? 'radial-gradient(circle, #8b1ff5 20%, transparent 80%)'
-              : 'radial-gradient(circle, #d946ef 20%, transparent 80%)',
-            boxShadow: isHovered
-              ? '0 0 8px #8b1ff5, 0 0 15px #3b82f6'
-              : '0 0 8px #d946ef, 0 0 15px #8b1ff5',
-          }}
-        />
-      ))}
-
-      {/* Core Glowing Laser Dot */}
-      <div
-        className="fixed top-0 left-0 rounded-full pointer-events-none z-[9999] -translate-x-1/2 -translate-y-1/2 transition-all duration-150 ease-out"
-        style={{
-          left: `${position.x}px`,
-          top: `${position.y}px`,
-          width: isHovered ? '20px' : '8px',
-          height: isHovered ? '20px' : '8px',
-          backgroundColor: isHovered ? '#3b82f6' : '#d946ef',
-          boxShadow: isHovered
-            ? '0 0 12px #3b82f6, 0 0 25px #8b1ff5'
-            : '0 0 12px #d946ef, 0 0 25px #8b1ff5',
-          border: isHovered ? '2px solid #ffffff' : 'none',
-        }}
+      <canvas
+        ref={canvasRef}
+        className="fixed top-0 left-0 w-full h-full pointer-events-none z-[99999]"
       />
     </>
   );
