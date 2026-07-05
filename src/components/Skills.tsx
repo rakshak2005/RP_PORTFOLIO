@@ -4,11 +4,23 @@ import { API_URL } from '../config';
 
 const Skills = () => {
   const containerRef = useRef<HTMLDivElement>(null);
-  
+
   const staticStack = [
-    { 
-      title: "Frontend", 
-      icon: <Lucide.Layers className="text-[#d946ef]" size={28} />, 
+    {
+      title: "Experience",
+      icon: <Lucide.Award className="text-[#8b1ff5]" size={28} />,
+      skills: [
+        { name: "React", rating: 4, icon: <Lucide.Cpu size={14} /> },
+        { name: "Next.js", rating: 4, icon: <Lucide.Globe size={14} /> },
+        { name: "Node", rating: 5, icon: <Lucide.Server size={14} /> },
+        { name: "Mongo", rating: 5, icon: <Lucide.Database size={14} /> },
+        { name: "Flutter", rating: 4, icon: <Lucide.Smartphone size={14} /> }
+      ],
+      side: "left"
+    },
+    {
+      title: "Frontend",
+      icon: <Lucide.Layers className="text-[#d946ef]" size={28} />,
       skills: [
         { name: "Next.js", icon: <Lucide.Globe size={14} /> },
         { name: "React", icon: <Lucide.Cpu size={14} /> },
@@ -16,12 +28,12 @@ const Skills = () => {
         { name: "Tailwind", icon: <Lucide.Layers size={14} /> },
         { name: "HTML5/CSS3", icon: <Lucide.Terminal size={14} /> },
         { name: "EJS", icon: <Lucide.Code2 size={14} /> }
-      ], 
-      side: "left" 
+      ],
+      side: "right"
     },
-    { 
-      title: "Backend", 
-      icon: <Lucide.Database className="text-[#8b1ff5]" size={28} />, 
+    {
+      title: "Backend",
+      icon: <Lucide.Database className="text-[#8b1ff5]" size={28} />,
       skills: [
         { name: "Node.js", icon: <Lucide.Server size={14} /> },
         { name: "Express", icon: <Lucide.Zap size={14} /> },
@@ -31,23 +43,23 @@ const Skills = () => {
         { name: "Firebase", icon: <Lucide.Globe size={14} /> },
         { name: "MySQL", icon: <Lucide.Database size={14} /> },
         { name: "JWT", icon: <Lucide.Terminal size={14} /> }
-      ], 
-      side: "right" 
+      ],
+      side: "left"
     },
-    { 
-      title: "App Dev", 
-      icon: <Lucide.SmartphoneNfc className="text-[#d946ef]" size={28} />, 
+    {
+      title: "App Dev",
+      icon: <Lucide.SmartphoneNfc className="text-[#d946ef]" size={28} />,
       skills: [
         { name: "Flutter", icon: <Lucide.Smartphone size={14} /> },
         { name: "Dart", icon: <Lucide.Code2 size={14} /> },
         { name: "Android", icon: <Lucide.Smartphone size={14} /> },
         { name: "iOS", icon: <Lucide.Smartphone size={14} /> }
-      ], 
-      side: "left" 
+      ],
+      side: "right"
     },
-    { 
-      title: "Tools & Cloud", 
-      icon: <Lucide.GitBranch className="text-[#8b1ff5]" size={28} />, 
+    {
+      title: "Tools & Cloud",
+      icon: <Lucide.GitBranch className="text-[#8b1ff5]" size={28} />,
       skills: [
         { name: "Git/GitHub", icon: <Lucide.GitBranch size={14} /> },
         { name: "Vercel", icon: <Lucide.Globe size={14} /> },
@@ -55,8 +67,8 @@ const Skills = () => {
         { name: "Figma", icon: <Lucide.Layers size={14} /> },
         { name: "Canva", icon: <Lucide.Layers size={14} /> },
         { name: "Power BI", icon: <Lucide.Database size={14} /> }
-      ], 
-      side: "right" 
+      ],
+      side: "left"
     }
   ];
 
@@ -98,7 +110,7 @@ const Skills = () => {
 
   useEffect(() => {
     if (stack.length === 0) return;
-    
+
     const observer = new IntersectionObserver(
       (entries) => {
         entries.forEach((entry) => {
@@ -111,7 +123,7 @@ const Skills = () => {
           }
         });
       },
-      { threshold: 0.1 } 
+      { threshold: 0.1 }
     );
 
     if (containerRef.current) {
@@ -130,7 +142,7 @@ const Skills = () => {
   return (
     <section id="skills" className="py-24 bg-[#050208] text-white overflow-hidden">
       <div className="max-w-5xl mx-auto px-6" ref={containerRef}>
-        
+
         <div className="flex flex-col items-center mb-16">
           <div className="flex items-center gap-3 mb-2">
             <Lucide.Zap className="text-[#d946ef] fill-[#d946ef]" size={16} />
@@ -146,11 +158,11 @@ const Skills = () => {
 
           <div className="space-y-10 md:space-y-6">
             {stack.map((item, i) => (
-              <div 
-                key={item.title || i} 
+              <div
+                key={item.title || i}
                 data-side={item.side}
-                style={{ 
-                  transitionDuration: '3000ms', 
+                style={{
+                  transitionDuration: '3000ms',
                   transitionTimingFunction: 'cubic-bezier(0.19, 1, 0.22, 1)',
                   transitionDelay: `${i * 150}ms`
                 }}
@@ -165,12 +177,19 @@ const Skills = () => {
                     </div>
                     <h3 className="text-2xl font-black uppercase italic tracking-tight">{item.title}</h3>
                   </div>
-                  
+
                   <div className={`flex flex-wrap gap-2 ${item.side === 'left' ? 'justify-end' : 'justify-start'}`}>
                     {item.skills?.map((s: any, idx: number) => (
-                      <span key={s.name || idx} className="flex items-center gap-2 px-3 py-2 text-[10px] font-bold uppercase tracking-wider border border-white/10 rounded-xl bg-black/40 hover:border-[#d946ef]/50 hover:bg-[#d946ef]/5 transition-all group">
-                        <span className="text-[#d946ef] opacity-50 group-hover:opacity-100">{getSkillIcon(s)}</span>
-                        {s.name}
+                      <span key={s.name || idx} className="flex items-center justify-between gap-3 px-3 py-2 text-[10px] font-bold uppercase tracking-wider border border-white/10 rounded-xl bg-black/40 hover:border-[#d946ef]/50 hover:bg-[#d946ef]/5 transition-all duration-300 hover:scale-105 group min-w-[125px]">
+                        <span className="flex items-center gap-2">
+                          <span className="text-[#d946ef] opacity-50 group-hover:opacity-100">{getSkillIcon(s)}</span>
+                          {s.name}
+                        </span>
+                        {s.rating && (
+                          <span className="text-yellow-500 font-mono tracking-tighter text-[9px] ml-1">
+                            {"★".repeat(s.rating)}{"☆".repeat(5 - s.rating)}
+                          </span>
+                        )}
                       </span>
                     ))}
                   </div>
@@ -184,6 +203,27 @@ const Skills = () => {
 
                 <div className="hidden md:block w-[44%]" />
               </div>
+            ))}
+          </div>
+        </div>
+
+        {/* Outside Coding Personality Panel */}
+        <div className="mt-20 pt-10 border-t border-white/5 flex flex-col items-center">
+          <h3 className="text-[10px] uppercase font-mono tracking-[0.3em] text-slate-500 mb-6 flex items-center gap-1.5">
+            <Lucide.Heart size={12} className="text-[#d946ef] fill-[#d946ef] animate-pulse" /> Outside Coding
+          </h3>
+          <div className="flex flex-wrap justify-center gap-3.5 max-w-2xl">
+            {[
+              { label: "Football", emoji: "⚽" },
+              { label: "AI", emoji: "🧠" },
+              { label: "Gaming", emoji: "🎮" },
+              { label: "Learning", emoji: "📚" },
+              { label: "Building products", emoji: "🚀" }
+            ].map((interest, i) => (
+              <span key={i} className="flex items-center gap-2.5 px-4.5 py-2.5 rounded-full bg-white/[0.02] border border-white/5 text-[10px] font-bold uppercase tracking-wider text-slate-300 hover:text-white hover:border-[#d946ef]/20 hover:bg-[#d946ef]/5 transition-all duration-300 hover:scale-105">
+                <span>{interest.emoji}</span>
+                {interest.label}
+              </span>
             ))}
           </div>
         </div>

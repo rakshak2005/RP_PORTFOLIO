@@ -2,3 +2,7 @@
 @tailwind components;
 @tailwind utilities;
 
+.bg-dots {
+  background-image: radial-gradient(rgba(217, 70, 239, 0.04) 1px, transparent 1px);
+  background-size: 24px 24px;
+}

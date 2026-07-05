@@ -84,8 +84,8 @@ const Dashboard = () => {
     navigate('/admin/login');
   };
 
-  // Image upload helper
-  const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>, type: 'company' | 'project') => {
+  // Image and Document upload helper
+  const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>, type: 'company' | 'project' | 'resume') => {
     const file = e.target.files?.[0];
     if (!file) return;
 
@@ -107,10 +107,12 @@ const Dashboard = () => {
 
       if (type === 'company') {
         setCompanyForm(prev => ({ ...prev, logo: data.url }));
-      } else {
+      } else if (type === 'project') {
         setProjectForm(prev => ({ ...prev, image: data.url }));
+      } else if (type === 'resume') {
+        setHeroData(prev => ({ ...prev, resumeLink: data.url }));
       }
-      showMsg('Image uploaded successfully!');
+      showMsg('File uploaded successfully!');
     } catch (err: any) {
       showMsg(err.message, 'error');
     } finally {
@@ -476,13 +478,24 @@ const Dashboard = () => {
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div className="space-y-2">
-                    <label className="text-[10px] font-mono uppercase tracking-widest text-slate-400">Resume Link (Google Drive / PDF)</label>
-                    <input 
-                      type="text" 
-                      value={heroData.resumeLink}
-                      onChange={e => setHeroData({...heroData, resumeLink: e.target.value})}
-                      className="w-full px-4 py-3 rounded-xl border border-white/5 bg-black/40 text-sm focus:outline-none focus:border-[#d946ef]/30"
-                    />
+                    <label className="text-[10px] font-mono uppercase tracking-widest text-slate-400">Resume Link / Document (Google Drive / Upload PDF)</label>
+                    <div className="flex items-center gap-4">
+                      <input 
+                        type="text" 
+                        value={heroData.resumeLink}
+                        onChange={e => setHeroData({...heroData, resumeLink: e.target.value})}
+                        className="flex-1 px-4 py-3 rounded-xl border border-white/5 bg-black/40 text-sm focus:outline-none focus:border-[#d946ef]/30"
+                      />
+                      <label className="px-4 py-3 rounded-xl border border-white/10 bg-white/5 hover:bg-white/10 text-xs font-bold uppercase tracking-wider flex items-center gap-1.5 cursor-pointer transition-colors whitespace-nowrap">
+                        <Upload size={14} /> Upload PDF
+                        <input 
+                          type="file" 
+                          accept="application/pdf"
+                          className="hidden" 
+                          onChange={e => handleFileUpload(e, 'resume')}
+                        />
+                      </label>
+                    </div>
                   </div>
                   <div className="space-y-2">
                     <label className="text-[10px] font-mono uppercase tracking-widest text-slate-400">LinkedIn Profile Link</label>

@@ -23,22 +23,26 @@ const Navigation = () => {
   ];
 
   return (
-    <header className="fixed top-0 left-0 right-0 z-[100] flex justify-center pt-6 pointer-events-none">
+    <header className={`fixed top-0 left-0 right-0 z-[100] flex justify-center transition-all duration-500 ease-[cubic-bezier(0.23,1,0.32,1)] pointer-events-none ${scrolled ? 'pt-3' : 'pt-6'}`}>
       <nav 
         className={`
           pointer-events-auto
           transition-all duration-500 ease-[cubic-bezier(0.23,1,0.32,1)]
-          bg-[#050208]/85 backdrop-blur-xl border border-[#d946ef]/15
+          bg-[#050208]/75 border
           shadow-[0_10px_30px_-10px_rgba(0,0,0,0.7)]
+          
+          ${scrolled 
+            ? 'backdrop-blur-2xl border-[#d946ef]/25 bg-[#050208]/50' 
+            : 'backdrop-blur-xl border-[#d946ef]/15 bg-[#050208]/85'}
           
           ${isOpen 
             ? 'w-[90%] max-w-[360px] rounded-[2rem]' 
             : scrolled 
-              ? 'w-[92%] max-w-[540px] rounded-full' 
+              ? 'w-[90%] max-w-[480px] rounded-full' 
               : 'w-[95%] max-w-7xl rounded-2xl'}
         `}
       >
-        <div className="flex justify-between items-center h-14 px-6 md:px-10">
+        <div className={`flex justify-between items-center transition-all duration-500 px-6 md:px-10 ${scrolled ? 'h-11' : 'h-14'}`}>
           <div className="flex items-center gap-3 shrink-0">
             <img 
               src={Logo} 

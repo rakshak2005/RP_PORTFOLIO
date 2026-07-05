@@ -29,6 +29,20 @@ const Footer = () => {
           DESIGNED FOR <br /> <span className="text-[#d946ef]">EXCELLENCE</span>
         </h2>
 
+        {/* Built with badges */}
+        <div className="flex flex-col items-center gap-3 mb-10">
+          <p className="text-[9px] uppercase font-mono tracking-[0.25em] text-slate-500 flex items-center gap-1.5 justify-center">
+            <Heart size={10} className="text-[#d946ef] fill-[#d946ef] animate-pulse" /> Built by Rakshak Patel V
+          </p>
+          <div className="flex flex-wrap justify-center gap-2">
+            {["Next.js", "React", "Tailwind", "Framer Motion", "Vercel"].map((tech, idx) => (
+              <span key={idx} className="px-2.5 py-1 text-[8px] font-mono tracking-wider font-bold uppercase rounded-lg border border-white/5 bg-white/[0.01] text-slate-400 hover:border-[#d946ef]/20 hover:text-white transition-colors duration-300">
+                {tech}
+              </span>
+            ))}
+          </div>
+        </div>
+
         <div className="flex flex-col md:flex-row items-center gap-4 text-slate-500 text-[11px] font-medium uppercase tracking-widest border-t border-white/5 pt-12 w-full justify-between">
           <p>© {currentYear} Rakshak Patel V</p>
           

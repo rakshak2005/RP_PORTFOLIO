@@ -1,8 +1,118 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Sparkles, Calendar, ArrowUpRight, Award, Code2 } from 'lucide-react';
 import amiloLogo from '@/assets/amilo_ai.png';
 import pentagonLogo from '@/assets/pentagon_space.png';
 import { API_URL } from '../config';
+
+interface CompanyCardProps {
+  exp: any;
+  idx: number;
+  inView: boolean;
+  getLogoSrc: (logo: string) => string;
+  getIcon: (exp: any) => React.ReactNode;
+}
+
+const CompanyCard = ({ exp, idx, inView, getLogoSrc, getIcon }: CompanyCardProps) => {
+  const [tilt, setTilt] = useState({ x: 0, y: 0 });
+  const [spotlight, setSpotlight] = useState({ x: 0, y: 0 });
+  const [isHovered, setIsHovered] = useState(false);
+
+  const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
+    const rect = e.currentTarget.getBoundingClientRect();
+    const x = (e.clientX - rect.left) / rect.width - 0.5;
+    const y = (e.clientY - rect.top) / rect.height - 0.5;
+    setTilt({ x: x * 10, y: -y * 10 }); // 10 degrees max tilt
+    setSpotlight({ x: e.clientX - rect.left, y: e.clientY - rect.top });
+    setIsHovered(true);
+  };
+
+  const handleMouseLeave = () => {
+    setTilt({ x: 0, y: 0 });
+    setIsHovered(false);
+  };
+
+  return (
+    <div
+      onMouseMove={handleMouseMove}
+      onMouseLeave={handleMouseLeave}
+      className={`group relative rounded-[2rem] p-6 md:p-8 bg-gradient-to-br ${exp.color || 'from-[#d946ef]/5 to-[#8b1ff5]/5'} border border-white/10 ${exp.borderColor || 'hover:border-white/20'} overflow-hidden flex flex-col justify-between cursor-pointer`}
+      style={{
+        transform: isHovered 
+          ? `perspective(1000px) rotateX(${tilt.y}deg) rotateY(${tilt.x}deg) scale(1.015)`
+          : inView 
+            ? 'perspective(1000px) translateY(0) rotateX(0deg) scale(1)' 
+            : 'perspective(1000px) translateY(80px) rotateX(12deg) scale(0.95)',
+        opacity: inView ? 1 : 0,
+        transition: isHovered ? 'transform 0.1s ease-out, opacity 0.5s ease' : 'transform 1.1s cubic-bezier(0.23, 1, 0.32, 1), opacity 1.1s ease',
+        transitionDelay: isHovered ? '0ms' : `${idx * 180}ms`
+      }}
+    >
+      {/* Spotlight glow follow */}
+      {isHovered && (
+        <div 
+          className="absolute -inset-px rounded-[2rem] pointer-events-none transition-opacity duration-300 opacity-100 z-10"
+          style={{
+            background: `radial-gradient(350px circle at ${spotlight.x}px ${spotlight.y}px, rgba(217, 70, 239, 0.12), transparent 80%)`
+          }}
+        />
+      )}
+
+      {/* Inner card light glow */}
+      <div className={`absolute top-0 right-0 w-40 h-40 rounded-full ${exp.glowColor || 'bg-[#d946ef]/5'} blur-[70px] pointer-events-none transition-opacity duration-500 opacity-50 group-hover:opacity-90`} />
+
+      <div>
+        {/* Top Header details - Medium Size */}
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
+          <div className="flex items-center gap-3.5">
+            <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-2xl bg-black/40 border border-white/10 p-2 flex items-center justify-center overflow-hidden flex-shrink-0 group-hover:border-white/20 transition-all duration-300 shadow-[0_0_12px_rgba(0,0,0,0.3)]">
+              <img
+                src={getLogoSrc(exp.logo)}
+                alt={exp.company}
+                className="w-full h-full object-contain filter brightness-95 group-hover:brightness-100 group-hover:scale-105 transition-all duration-300"
+              />
+            </div>
+            <div>
+              <h4 className="text-base sm:text-lg font-black uppercase tracking-tight text-white/95 group-hover:text-white transition-all duration-300">
+                {exp.company}
+              </h4>
+              <span className="text-[10px] text-slate-500 uppercase tracking-wider block font-mono mt-0.5">
+                {exp.timeline}
+              </span>
+            </div>
+          </div>
+
+          <div className="inline-flex items-center gap-1.5 self-start sm:self-center px-3.5 py-1.5 rounded-full border border-white/5 bg-white/[0.04] backdrop-blur-md">
+            {getIcon(exp)}
+            <span className="text-[9px] font-mono font-bold uppercase tracking-wider text-slate-300">{exp.badge}</span>
+          </div>
+        </div>
+
+        {/* Subtitle / Role - Medium Size */}
+        <h5 className="text-sm sm:text-base font-bold text-white mb-3 flex items-center gap-1.5 group-hover:text-[#d946ef] transition-colors duration-300">
+          {exp.role}
+          <ArrowUpRight size={14} className="opacity-0 group-hover:opacity-100 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-all duration-300" />
+        </h5>
+
+        {/* Description - Medium Size */}
+        <p className="text-slate-400 text-xs sm:text-sm leading-relaxed mb-6 font-light">
+          {exp.description}
+        </p>
+      </div>
+
+      {/* Highlights tags - Medium Size */}
+      <div className="flex flex-wrap gap-2 pt-4 border-t border-white/5 z-20">
+        {exp.highlights?.map((tag: string, tIdx: number) => (
+          <span
+            key={tIdx}
+            className="px-3 py-1 rounded-xl border border-white/5 bg-black/30 text-[10px] font-mono text-slate-400 group-hover:border-white/10 transition-all duration-300"
+          >
+            {tag}
+          </span>
+        ))}
+      </div>
+    </div>
+  );
+};
 
 const Companies = () => {
   const staticExperiences = [
@@ -35,6 +145,26 @@ const Companies = () => {
   ];
 
   const [experiences, setExperiences] = useState<any[]>([]);
+  const sectionRef = useRef<HTMLDivElement | null>(null);
+  const [inView, setInView] = useState(false);
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setInView(true);
+          observer.unobserve(entry.target);
+        }
+      },
+      { threshold: 0.15 }
+    );
+
+    if (sectionRef.current) {
+      observer.observe(sectionRef.current);
+    }
+
+    return () => observer.disconnect();
+  }, []);
 
   useEffect(() => {
     fetch(`${API_URL}/api/companies`)
@@ -74,7 +204,7 @@ const Companies = () => {
   };
 
   return (
-    <section id="companies" className="py-20 bg-[#050208] text-white relative overflow-hidden">
+    <section ref={sectionRef} id="companies" className="py-20 bg-[#050208] text-white relative overflow-hidden">
       {/* Decorative subtle background glow */}
       <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[450px] h-[150px] bg-[#d946ef]/5 blur-[120px] rounded-full pointer-events-none" />
 
@@ -91,67 +221,17 @@ const Companies = () => {
           </h2>
         </div>
 
-        {/* Experience Cards Grid - Balanced Medium Size */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8">
+        {/* Experience Cards Grid with 3D perspective wrapper */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8" style={{ perspective: '1000px' }}>
           {experiences.map((exp, idx) => (
-            <div
+            <CompanyCard 
               key={idx}
-              className={`group relative rounded-[2rem] p-6 md:p-8 bg-gradient-to-br ${exp.color || 'from-[#d946ef]/5 to-[#8b1ff5]/5'} border border-white/10 ${exp.borderColor || 'hover:border-white/20'} transition-all duration-500 hover:translate-y-[-3px] overflow-hidden flex flex-col justify-between`}
-            >
-              {/* Inner card light glow */}
-              <div className={`absolute top-0 right-0 w-40 h-40 rounded-full ${exp.glowColor || 'bg-[#d946ef]/5'} blur-[70px] pointer-events-none transition-opacity duration-500 opacity-50 group-hover:opacity-90`} />
-
-              <div>
-                {/* Top Header details - Medium Size */}
-                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
-                  <div className="flex items-center gap-3.5">
-                    <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-2xl bg-black/40 border border-white/10 p-2 flex items-center justify-center overflow-hidden flex-shrink-0 group-hover:border-white/20 transition-all duration-300 shadow-[0_0_12px_rgba(0,0,0,0.3)]">
-                      <img
-                        src={getLogoSrc(exp.logo)}
-                        alt={exp.company}
-                        className="w-full h-full object-contain filter brightness-95 group-hover:brightness-100 group-hover:scale-105 transition-all duration-300"
-                      />
-                    </div>
-                    <div>
-                      <h4 className="text-base sm:text-lg font-black uppercase tracking-tight text-white/95 group-hover:text-white transition-all duration-300">
-                        {exp.company}
-                      </h4>
-                      <span className="text-[10px] text-slate-500 uppercase tracking-wider block font-mono mt-0.5">
-                        {exp.timeline}
-                      </span>
-                    </div>
-                  </div>
-
-                  <div className="inline-flex items-center gap-1.5 self-start sm:self-center px-3.5 py-1.5 rounded-full border border-white/5 bg-white/[0.04] backdrop-blur-md">
-                    {getIcon(exp)}
-                    <span className="text-[9px] font-mono font-bold uppercase tracking-wider text-slate-300">{exp.badge}</span>
-                  </div>
-                </div>
-
-                {/* Subtitle / Role - Medium Size */}
-                <h5 className="text-sm sm:text-base font-bold text-white mb-3 flex items-center gap-1.5 group-hover:text-[#d946ef] transition-colors duration-300">
-                  {exp.role}
-                  <ArrowUpRight size={14} className="opacity-0 group-hover:opacity-100 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-all duration-300" />
-                </h5>
-
-                {/* Description - Medium Size */}
-                <p className="text-slate-400 text-xs sm:text-sm leading-relaxed mb-6 font-light">
-                  {exp.description}
-                </p>
-              </div>
-
-              {/* Highlights tags - Medium Size */}
-              <div className="flex flex-wrap gap-2 pt-4 border-t border-white/5">
-                {exp.highlights?.map((tag: string, tIdx: number) => (
-                  <span
-                    key={tIdx}
-                    className="px-3 py-1 rounded-xl border border-white/5 bg-black/30 text-[10px] font-mono text-slate-400 group-hover:border-white/10 transition-all duration-300"
-                  >
-                    {tag}
-                  </span>
-                ))}
-              </div>
-            </div>
+              exp={exp}
+              idx={idx}
+              inView={inView}
+              getLogoSrc={getLogoSrc}
+              getIcon={getIcon}
+            />
           ))}
         </div>
 
