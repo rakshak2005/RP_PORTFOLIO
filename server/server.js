@@ -6,10 +6,13 @@ import path from 'path';
 import fs from 'fs';
 import dns from 'dns';
 
-try {
-  dns.setServers(['8.8.8.8', '1.1.1.1']);
-} catch (err) {
-  console.warn('Could not set DNS servers, proceeding with default:', err);
+// Only override DNS servers in local development to avoid blocking/timeouts in cloud environments like Vercel
+if (process.env.NODE_ENV !== 'production' && !process.env.VERCEL) {
+  try {
+    dns.setServers(['8.8.8.8', '1.1.1.1']);
+  } catch (err) {
+    console.warn('Could not set DNS servers, proceeding with default:', err);
+  }
 }
 
 // Import routes
