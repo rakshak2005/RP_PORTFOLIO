@@ -1,6 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import * as Lucide from 'lucide-react';
 import { API_URL } from '../config';
+import { fetchWithCache } from '../lib/cache';
 
 const Skills = () => {
   const containerRef = useRef<HTMLDivElement>(null);
@@ -75,18 +76,18 @@ const Skills = () => {
   const [stack, setStack] = useState<any[]>([]);
 
   useEffect(() => {
-    fetch(`${API_URL}/api/skills`)
-      .then(res => res.ok ? res.json() : null)
-      .then(data => {
+    fetchWithCache(
+      `${API_URL}/api/skills`,
+      (data) => {
         if (data && data.length > 0) {
           setStack(data);
         } else {
           setStack(staticStack);
         }
-      })
-      .catch(() => {
-        setStack(staticStack);
-      });
+      },
+      staticStack,
+      (data) => Array.isArray(data) && data.length > 0
+    );
   }, []);
 
   const renderLucideIcon = (name: string, size = 14, className = "") => {

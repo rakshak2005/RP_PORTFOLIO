@@ -3,6 +3,7 @@ import { Sparkles, Calendar, ArrowUpRight, Award, Code2 } from 'lucide-react';
 import amiloLogo from '@/assets/amilo_ai.png';
 import pentagonLogo from '@/assets/pentagon_space.png';
 import { API_URL } from '../config';
+import { fetchWithCache } from '../lib/cache';
 
 interface CompanyCardProps {
   exp: any;
@@ -167,18 +168,18 @@ const Companies = () => {
   }, []);
 
   useEffect(() => {
-    fetch(`${API_URL}/api/companies`)
-      .then(res => res.ok ? res.json() : null)
-      .then(data => {
+    fetchWithCache(
+      `${API_URL}/api/companies`,
+      (data) => {
         if (data && data.length > 0) {
           setExperiences(data);
         } else {
           setExperiences(staticExperiences);
         }
-      })
-      .catch(() => {
-        setExperiences(staticExperiences);
-      });
+      },
+      staticExperiences,
+      (data) => Array.isArray(data) && data.length > 0
+    );
   }, []);
 
   const getLogoSrc = (logo: string) => {

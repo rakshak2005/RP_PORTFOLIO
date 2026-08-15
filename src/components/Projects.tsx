@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { ExternalLink, Github, Sparkles, Globe } from 'lucide-react';
 import { API_URL } from '../config';
+import { fetchWithCache } from '../lib/cache';
 
 const Projects = () => {
   const staticProjects = [
@@ -49,18 +50,18 @@ const Projects = () => {
   const [projects, setProjects] = useState<any[]>([]);
 
   useEffect(() => {
-    fetch(`${API_URL}/api/projects`)
-      .then(res => res.ok ? res.json() : null)
-      .then(data => {
+    fetchWithCache(
+      `${API_URL}/api/projects`,
+      (data) => {
         if (data && data.length > 0) {
           setProjects(data.filter((p: any) => !p.isHidden));
         } else {
           setProjects(staticProjects);
         }
-      })
-      .catch(() => {
-        setProjects(staticProjects);
-      });
+      },
+      staticProjects,
+      (data) => Array.isArray(data) && data.length > 0
+    );
   }, []);
 
   return (

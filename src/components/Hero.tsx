@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Github, Linkedin, Instagram, Twitter, Download, Sparkles, MousePointer2 } from 'lucide-react';
 import mainImg from '@/assets/hero.jpeg';
 import { API_URL } from '../config';
+import { fetchWithCache } from '../lib/cache';
 
 const Hero = () => {
   const [heroData, setHeroData] = useState({
@@ -22,12 +23,13 @@ const Hero = () => {
   const characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789%&#$@";
 
   useEffect(() => {
-    fetch(`${API_URL}/api/hero`)
-      .then(res => res.ok ? res.json() : null)
-      .then(data => {
+    fetchWithCache(
+      `${API_URL}/api/hero`,
+      (data) => {
         if (data) setHeroData(data);
-      })
-      .catch(() => { /* Graceful fallback */ });
+      },
+      heroData
+    );
   }, []);
 
   useEffect(() => {
