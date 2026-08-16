@@ -1,4 +1,4 @@
-# RP Portfolio • Full-Stack Developer Platform
+# MY Portfolio • Full-Stack Developer Platform
 
 ![Portfolio Preview](preview.png)
 
