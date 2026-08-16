@@ -56,7 +56,7 @@ const ProjectsPage = () => {
       title: "Carrer iq",
       category: "AI Platform",
       description: "AI-powered career analysis platform that evaluates resumes, GitHub profiles, and projects to generate a comprehensive employability score.",
-      demoLink: "https://carrer-iq.vercel.app/",
+      demoLink: "https://carreriq-nine.vercel.app/",
       technologies: ["Next.js", "React", "TypeScript", "Tailwind CSS", "Node.js", "Express.js", "MongoDB", "Firebase", "OpenAI API", "GitHub API", "Vercel"],
       githubLink: "https://github.com/rakshak2005",
       image: ""
