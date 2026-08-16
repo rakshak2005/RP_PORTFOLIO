@@ -38,10 +38,10 @@ const CompanyCard = ({ exp, idx, inView, getLogoSrc, getIcon }: CompanyCardProps
       onMouseLeave={handleMouseLeave}
       className={`group relative rounded-[2rem] p-6 md:p-8 bg-gradient-to-br ${exp.color || 'from-[#d946ef]/5 to-[#8b1ff5]/5'} border border-white/10 ${exp.borderColor || 'hover:border-white/20'} overflow-hidden flex flex-col justify-between cursor-pointer`}
       style={{
-        transform: isHovered 
+        transform: isHovered
           ? `perspective(1000px) rotateX(${tilt.y}deg) rotateY(${tilt.x}deg) scale(1.015)`
-          : inView 
-            ? 'perspective(1000px) translateY(0) rotateX(0deg) scale(1)' 
+          : inView
+            ? 'perspective(1000px) translateY(0) rotateX(0deg) scale(1)'
             : 'perspective(1000px) translateY(80px) rotateX(12deg) scale(0.95)',
         opacity: inView ? 1 : 0,
         transition: isHovered ? 'transform 0.1s ease-out, opacity 0.5s ease' : 'transform 1.1s cubic-bezier(0.23, 1, 0.32, 1), opacity 1.1s ease',
@@ -50,7 +50,7 @@ const CompanyCard = ({ exp, idx, inView, getLogoSrc, getIcon }: CompanyCardProps
     >
       {/* Spotlight glow follow */}
       {isHovered && (
-        <div 
+        <div
           className="absolute -inset-px rounded-[2rem] pointer-events-none transition-opacity duration-300 opacity-100 z-10"
           style={{
             background: `radial-gradient(350px circle at ${spotlight.x}px ${spotlight.y}px, rgba(217, 70, 239, 0.12), transparent 80%)`
@@ -225,7 +225,7 @@ const Companies = () => {
         {/* Experience Cards Grid with 3D perspective wrapper */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8" style={{ perspective: '1000px' }}>
           {experiences.map((exp, idx) => (
-            <CompanyCard 
+            <CompanyCard
               key={idx}
               exp={exp}
               idx={idx}

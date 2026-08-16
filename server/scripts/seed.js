@@ -188,6 +188,32 @@ const seedData = async () => {
           { name: "Canva", icon: "Layers" },
           { name: "Power BI", icon: "Database" }
         ]
+      },
+      {
+        title: "Experience",
+        icon: "Award",
+        side: "left",
+        order: 5,
+        skills: [
+          { name: "React", rating: 4, icon: "Cpu" },
+          { name: "Next.js", rating: 4, icon: "Globe" },
+          { name: "Node", rating: 5, icon: "Server" },
+          { name: "Mongo", rating: 5, icon: "Database" },
+          { name: "Flutter", rating: 4, icon: "Smartphone" }
+        ]
+      },
+      {
+        title: "Design & UI/UX",
+        icon: "Paintbrush",
+        side: "right",
+        order: 6,
+        skills: [
+          { name: "Figma", rating: 4, icon: "Layers" },
+          { name: "Canva", rating: 4, icon: "Layers" },
+          { name: "Wireframing", rating: 4, icon: "Cpu" },
+          { name: "UI/UX Design", rating: 5, icon: "Globe" },
+          { name: "Design Systems", rating: 4, icon: "Layers" }
+        ]
       }
     ];
     await Skill.insertMany(skills);

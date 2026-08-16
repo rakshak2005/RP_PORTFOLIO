@@ -32,7 +32,7 @@ const Footer = () => {
         {/* Built with badges */}
         <div className="flex flex-col items-center gap-3 mb-10">
           <p className="text-[9px] uppercase font-mono tracking-[0.25em] text-slate-500 flex items-center gap-1.5 justify-center">
-            <Heart size={10} className="text-[#d946ef] fill-[#d946ef] animate-pulse" /> Built by Rakshak Patel V
+            Built by Rakshak Patel V
           </p>
           <div className="flex flex-wrap justify-center gap-2">
             {["Next.js", "React", "Tailwind", "Framer Motion", "Vercel"].map((tech, idx) => (

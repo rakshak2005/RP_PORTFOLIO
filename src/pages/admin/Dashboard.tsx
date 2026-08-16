@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { API_URL } from '../../config';
-import { 
-  Sparkles, LogOut, FileText, Briefcase, Code, Award, 
-  Settings, Save, Plus, Trash2, Edit, Upload, Check, AlertCircle, RefreshCw 
+import {
+  Sparkles, LogOut, FileText, Briefcase, Code, Award,
+  Settings, Save, Plus, Trash2, Edit, Upload, Check, AlertCircle, RefreshCw
 } from 'lucide-react';
 
 const Dashboard = () => {
@@ -155,8 +155,8 @@ const Dashboard = () => {
     };
 
     const isEdit = !!projectForm._id;
-    const url = isEdit 
-      ? `${API_URL}/api/projects/${projectForm._id}` 
+    const url = isEdit
+      ? `${API_URL}/api/projects/${projectForm._id}`
       : `${API_URL}/api/projects`;
     const method = isEdit ? 'PUT' : 'POST';
 
@@ -207,14 +207,14 @@ const Dashboard = () => {
     setLoading(true);
     const body = {
       ...companyForm,
-      highlights: typeof companyForm.highlights === 'string' 
+      highlights: typeof companyForm.highlights === 'string'
         ? companyForm.highlights.split(',').map(t => t.trim()).filter(Boolean)
         : companyForm.highlights
     };
 
     const isEdit = !!companyForm._id;
-    const url = isEdit 
-      ? `${API_URL}/api/companies/${companyForm._id}` 
+    const url = isEdit
+      ? `${API_URL}/api/companies/${companyForm._id}`
       : `${API_URL}/api/companies`;
     const method = isEdit ? 'PUT' : 'POST';
 
@@ -280,8 +280,8 @@ const Dashboard = () => {
     };
 
     const isEdit = !!skillForm._id;
-    const url = isEdit 
-      ? `${API_URL}/api/skills/${skillForm._id}` 
+    const url = isEdit
+      ? `${API_URL}/api/skills/${skillForm._id}`
       : `${API_URL}/api/skills`;
     const method = isEdit ? 'PUT' : 'POST';
 
@@ -371,14 +371,14 @@ const Dashboard = () => {
           </span>
         </div>
         <div className="flex items-center gap-4">
-          <button 
-            onClick={() => navigate('/')} 
+          <button
+            onClick={() => navigate('/')}
             className="text-slate-400 hover:text-white text-xs font-mono transition-colors uppercase tracking-wider hidden sm:block"
           >
             Visit Live Site
           </button>
-          <button 
-            onClick={handleLogout} 
+          <button
+            onClick={handleLogout}
             className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-red-500/20 bg-red-500/10 hover:bg-red-500 hover:text-white text-red-400 text-xs font-bold uppercase tracking-wider transition-all"
           >
             <LogOut size={13} /> Logout
@@ -388,7 +388,7 @@ const Dashboard = () => {
 
       {/* Main layout */}
       <div className="flex-1 max-w-7xl w-full mx-auto px-6 py-10 grid grid-cols-1 lg:grid-cols-12 gap-8">
-        
+
         {/* Navigation Sidebar */}
         <aside className="lg:col-span-3 space-y-2">
           {[
@@ -402,8 +402,8 @@ const Dashboard = () => {
               key={tab.id}
               onClick={() => { setActiveTab(tab.id); setMsg({ text: '', type: '' }); }}
               className={`w-full flex items-center gap-3 px-5 py-4 rounded-xl border text-sm font-semibold uppercase tracking-wider transition-all text-left
-                ${activeTab === tab.id 
-                  ? 'bg-[#d946ef]/10 border-[#d946ef]/30 text-[#d946ef]' 
+                ${activeTab === tab.id
+                  ? 'bg-[#d946ef]/10 border-[#d946ef]/30 text-[#d946ef]'
                   : 'bg-white/[0.01] border-white/5 text-slate-400 hover:border-white/10 hover:text-white'
                 }
               `}
@@ -418,8 +418,8 @@ const Dashboard = () => {
           {/* Notifications banner */}
           {msg.text && (
             <div className={`flex items-center gap-2.5 p-4 rounded-2xl border text-sm font-medium animate-fade-in
-              ${msg.type === 'error' 
-                ? 'bg-red-500/10 border-red-500/20 text-red-400' 
+              ${msg.type === 'error'
+                ? 'bg-red-500/10 border-red-500/20 text-red-400'
                 : 'bg-green-500/10 border-green-500/20 text-green-400'
               }
             `}>
@@ -438,19 +438,19 @@ const Dashboard = () => {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div className="space-y-2">
                     <label className="text-[10px] font-mono uppercase tracking-widest text-slate-400">Greeting Text</label>
-                    <input 
-                      type="text" 
+                    <input
+                      type="text"
                       value={heroData.greeting}
-                      onChange={e => setHeroData({...heroData, greeting: e.target.value})}
+                      onChange={e => setHeroData({ ...heroData, greeting: e.target.value })}
                       className="w-full px-4 py-3 rounded-xl border border-white/5 bg-black/40 text-sm focus:outline-none focus:border-[#d946ef]/30"
                     />
                   </div>
                   <div className="space-y-2">
                     <label className="text-[10px] font-mono uppercase tracking-widest text-slate-400">Name (Solid Title)</label>
-                    <input 
-                      type="text" 
+                    <input
+                      type="text"
                       value={heroData.name}
-                      onChange={e => setHeroData({...heroData, name: e.target.value})}
+                      onChange={e => setHeroData({ ...heroData, name: e.target.value })}
                       className="w-full px-4 py-3 rounded-xl border border-white/5 bg-black/40 text-sm focus:outline-none focus:border-[#d946ef]/30"
                     />
                   </div>
@@ -458,20 +458,20 @@ const Dashboard = () => {
 
                 <div className="space-y-2">
                   <label className="text-[10px] font-mono uppercase tracking-widest text-slate-400">Sub-Title / Professional Focus</label>
-                  <input 
-                    type="text" 
+                  <input
+                    type="text"
                     value={heroData.subtitle}
-                    onChange={e => setHeroData({...heroData, subtitle: e.target.value})}
+                    onChange={e => setHeroData({ ...heroData, subtitle: e.target.value })}
                     className="w-full px-4 py-3 rounded-xl border border-white/5 bg-black/40 text-sm focus:outline-none focus:border-[#d946ef]/30"
                   />
                 </div>
 
                 <div className="space-y-2">
                   <label className="text-[10px] font-mono uppercase tracking-widest text-slate-400">Intro Description</label>
-                  <textarea 
+                  <textarea
                     rows={4}
                     value={heroData.description}
-                    onChange={e => setHeroData({...heroData, description: e.target.value})}
+                    onChange={e => setHeroData({ ...heroData, description: e.target.value })}
                     className="w-full px-4 py-3 rounded-xl border border-white/5 bg-black/40 text-sm focus:outline-none focus:border-[#d946ef]/30"
                   />
                 </div>
@@ -480,18 +480,18 @@ const Dashboard = () => {
                   <div className="space-y-2">
                     <label className="text-[10px] font-mono uppercase tracking-widest text-slate-400">Resume Link / Document (Google Drive / Upload PDF)</label>
                     <div className="flex items-center gap-4">
-                      <input 
-                        type="text" 
+                      <input
+                        type="text"
                         value={heroData.resumeLink}
-                        onChange={e => setHeroData({...heroData, resumeLink: e.target.value})}
+                        onChange={e => setHeroData({ ...heroData, resumeLink: e.target.value })}
                         className="flex-1 px-4 py-3 rounded-xl border border-white/5 bg-black/40 text-sm focus:outline-none focus:border-[#d946ef]/30"
                       />
                       <label className="px-4 py-3 rounded-xl border border-white/10 bg-white/5 hover:bg-white/10 text-xs font-bold uppercase tracking-wider flex items-center gap-1.5 cursor-pointer transition-colors whitespace-nowrap">
                         <Upload size={14} /> Upload PDF
-                        <input 
-                          type="file" 
+                        <input
+                          type="file"
                           accept="application/pdf"
-                          className="hidden" 
+                          className="hidden"
                           onChange={e => handleFileUpload(e, 'resume')}
                         />
                       </label>
@@ -499,10 +499,10 @@ const Dashboard = () => {
                   </div>
                   <div className="space-y-2">
                     <label className="text-[10px] font-mono uppercase tracking-widest text-slate-400">LinkedIn Profile Link</label>
-                    <input 
-                      type="text" 
+                    <input
+                      type="text"
                       value={heroData.linkedinLink}
-                      onChange={e => setHeroData({...heroData, linkedinLink: e.target.value})}
+                      onChange={e => setHeroData({ ...heroData, linkedinLink: e.target.value })}
                       className="w-full px-4 py-3 rounded-xl border border-white/5 bg-black/40 text-sm focus:outline-none focus:border-[#d946ef]/30"
                     />
                   </div>
@@ -511,30 +511,30 @@ const Dashboard = () => {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div className="space-y-2">
                     <label className="text-[10px] font-mono uppercase tracking-widest text-slate-400">GitHub Profile Link</label>
-                    <input 
-                      type="text" 
+                    <input
+                      type="text"
                       value={heroData.githubLink}
-                      onChange={e => setHeroData({...heroData, githubLink: e.target.value})}
+                      onChange={e => setHeroData({ ...heroData, githubLink: e.target.value })}
                       className="w-full px-4 py-3 rounded-xl border border-white/5 bg-black/40 text-sm focus:outline-none focus:border-[#d946ef]/30"
                     />
                   </div>
                   <div className="space-y-2">
                     <label className="text-[10px] font-mono uppercase tracking-widest text-slate-400">Instagram Profile Link</label>
-                    <input 
-                      type="text" 
+                    <input
+                      type="text"
                       value={heroData.instagramLink}
-                      onChange={e => setHeroData({...heroData, instagramLink: e.target.value})}
+                      onChange={e => setHeroData({ ...heroData, instagramLink: e.target.value })}
                       className="w-full px-4 py-3 rounded-xl border border-white/5 bg-black/40 text-sm focus:outline-none focus:border-[#d946ef]/30"
                     />
                   </div>
                 </div>
 
                 <div className="flex items-center gap-3">
-                  <input 
-                    type="checkbox" 
+                  <input
+                    type="checkbox"
                     id="openForProjects"
                     checked={heroData.openForProjects}
-                    onChange={e => setHeroData({...heroData, openForProjects: e.target.checked})}
+                    onChange={e => setHeroData({ ...heroData, openForProjects: e.target.checked })}
                     className="w-4 h-4 accent-[#d946ef] rounded"
                   />
                   <label htmlFor="openForProjects" className="text-sm font-semibold text-slate-300 select-none">
@@ -565,21 +565,21 @@ const Dashboard = () => {
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div className="space-y-2">
                       <label className="text-[10px] font-mono uppercase tracking-widest text-slate-400">Project Title</label>
-                      <input 
-                        type="text" 
+                      <input
+                        type="text"
                         required
                         value={projectForm.title}
-                        onChange={e => setProjectForm({...projectForm, title: e.target.value})}
+                        onChange={e => setProjectForm({ ...projectForm, title: e.target.value })}
                         className="w-full px-4 py-3 rounded-xl border border-white/5 bg-black/40 text-sm focus:outline-none focus:border-[#d946ef]/30"
                       />
                     </div>
                     <div className="space-y-2">
                       <label className="text-[10px] font-mono uppercase tracking-widest text-slate-400">Project Category (e.g. Mobile App, SaaS)</label>
-                      <input 
-                        type="text" 
+                      <input
+                        type="text"
                         required
                         value={projectForm.category}
-                        onChange={e => setProjectForm({...projectForm, category: e.target.value})}
+                        onChange={e => setProjectForm({ ...projectForm, category: e.target.value })}
                         className="w-full px-4 py-3 rounded-xl border border-white/5 bg-black/40 text-sm focus:outline-none focus:border-[#d946ef]/30"
                       />
                     </div>
@@ -587,22 +587,22 @@ const Dashboard = () => {
 
                   <div className="space-y-2">
                     <label className="text-[10px] font-mono uppercase tracking-widest text-slate-400">Description</label>
-                    <textarea 
+                    <textarea
                       rows={3}
                       required
                       value={projectForm.description}
-                      onChange={e => setProjectForm({...projectForm, description: e.target.value})}
+                      onChange={e => setProjectForm({ ...projectForm, description: e.target.value })}
                       className="w-full px-4 py-3 rounded-xl border border-white/5 bg-black/40 text-sm focus:outline-none focus:border-[#d946ef]/30"
                     />
                   </div>
 
                   <div className="space-y-2">
                     <label className="text-[10px] font-mono uppercase tracking-widest text-slate-400">Technologies (Comma separated: React, Node.js, MDB)</label>
-                    <input 
-                      type="text" 
+                    <input
+                      type="text"
                       required
                       value={projectForm.technologies}
-                      onChange={e => setProjectForm({...projectForm, technologies: e.target.value})}
+                      onChange={e => setProjectForm({ ...projectForm, technologies: e.target.value })}
                       placeholder="e.g. Flutter, Dart, Firebase"
                       className="w-full px-4 py-3 rounded-xl border border-white/5 bg-black/40 text-sm focus:outline-none focus:border-[#d946ef]/30"
                     />
@@ -611,19 +611,19 @@ const Dashboard = () => {
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div className="space-y-2">
                       <label className="text-[10px] font-mono uppercase tracking-widest text-slate-400">Live Demo URL</label>
-                      <input 
-                        type="text" 
+                      <input
+                        type="text"
                         value={projectForm.demoLink}
-                        onChange={e => setProjectForm({...projectForm, demoLink: e.target.value})}
+                        onChange={e => setProjectForm({ ...projectForm, demoLink: e.target.value })}
                         className="w-full px-4 py-3 rounded-xl border border-white/5 bg-black/40 text-sm focus:outline-none focus:border-[#d946ef]/30"
                       />
                     </div>
                     <div className="space-y-2">
                       <label className="text-[10px] font-mono uppercase tracking-widest text-slate-400">GitHub Repo URL</label>
-                      <input 
-                        type="text" 
+                      <input
+                        type="text"
                         value={projectForm.githubLink}
-                        onChange={e => setProjectForm({...projectForm, githubLink: e.target.value})}
+                        onChange={e => setProjectForm({ ...projectForm, githubLink: e.target.value })}
                         className="w-full px-4 py-3 rounded-xl border border-white/5 bg-black/40 text-sm focus:outline-none focus:border-[#d946ef]/30"
                       />
                     </div>
@@ -633,19 +633,19 @@ const Dashboard = () => {
                   <div className="space-y-2">
                     <label className="text-[10px] font-mono uppercase tracking-widest text-slate-400">Fallback Image Cover (Optional for iframes)</label>
                     <div className="flex items-center gap-4">
-                      <input 
-                        type="text" 
+                      <input
+                        type="text"
                         value={projectForm.image}
-                        onChange={e => setProjectForm({...projectForm, image: e.target.value})}
+                        onChange={e => setProjectForm({ ...projectForm, image: e.target.value })}
                         placeholder="Path to image (or upload below)"
                         className="flex-1 px-4 py-3 rounded-xl border border-white/5 bg-black/40 text-sm focus:outline-none focus:border-[#d946ef]/30"
                       />
                       <label className="px-4 py-3 rounded-xl border border-white/10 bg-white/5 hover:bg-white/10 text-xs font-bold uppercase tracking-wider flex items-center gap-1.5 cursor-pointer transition-colors">
                         <Upload size={14} /> Upload Logo
-                        <input 
-                          type="file" 
+                        <input
+                          type="file"
                           accept="image/*"
-                          className="hidden" 
+                          className="hidden"
                           onChange={e => handleFileUpload(e, 'project')}
                         />
                       </label>
@@ -659,11 +659,11 @@ const Dashboard = () => {
 
                   {/* Hide Project checkbox */}
                   <div className="flex items-center gap-3">
-                    <input 
-                      type="checkbox" 
+                    <input
+                      type="checkbox"
                       id="isHidden"
                       checked={projectForm.isHidden}
-                      onChange={e => setProjectForm({...projectForm, isHidden: e.target.checked})}
+                      onChange={e => setProjectForm({ ...projectForm, isHidden: e.target.checked })}
                       className="w-4 h-4 accent-[#d946ef] rounded"
                     />
                     <label htmlFor="isHidden" className="text-sm font-semibold text-slate-300 select-none">
@@ -753,21 +753,21 @@ const Dashboard = () => {
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div className="space-y-2">
                       <label className="text-[10px] font-mono uppercase tracking-widest text-slate-400">Company Name</label>
-                      <input 
-                        type="text" 
+                      <input
+                        type="text"
                         required
                         value={companyForm.company}
-                        onChange={e => setCompanyForm({...companyForm, company: e.target.value})}
+                        onChange={e => setCompanyForm({ ...companyForm, company: e.target.value })}
                         className="w-full px-4 py-3 rounded-xl border border-white/5 bg-black/40 text-sm focus:outline-none focus:border-[#d946ef]/30"
                       />
                     </div>
                     <div className="space-y-2">
                       <label className="text-[10px] font-mono uppercase tracking-widest text-slate-400">Badge/Classification (e.g. Industry Projects)</label>
-                      <input 
-                        type="text" 
+                      <input
+                        type="text"
                         required
                         value={companyForm.badge}
-                        onChange={e => setCompanyForm({...companyForm, badge: e.target.value})}
+                        onChange={e => setCompanyForm({ ...companyForm, badge: e.target.value })}
                         className="w-full px-4 py-3 rounded-xl border border-white/5 bg-black/40 text-sm focus:outline-none focus:border-[#d946ef]/30"
                       />
                     </div>
@@ -776,21 +776,21 @@ const Dashboard = () => {
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div className="space-y-2">
                       <label className="text-[10px] font-mono uppercase tracking-widest text-slate-400">Role Title (e.g. Project Developer)</label>
-                      <input 
-                        type="text" 
+                      <input
+                        type="text"
                         required
                         value={companyForm.role}
-                        onChange={e => setCompanyForm({...companyForm, role: e.target.value})}
+                        onChange={e => setCompanyForm({ ...companyForm, role: e.target.value })}
                         className="w-full px-4 py-3 rounded-xl border border-white/5 bg-black/40 text-sm focus:outline-none focus:border-[#d946ef]/30"
                       />
                     </div>
                     <div className="space-y-2">
                       <label className="text-[10px] font-mono uppercase tracking-widest text-slate-400">Timeline / Selection Status</label>
-                      <input 
-                        type="text" 
+                      <input
+                        type="text"
                         required
                         value={companyForm.timeline}
-                        onChange={e => setCompanyForm({...companyForm, timeline: e.target.value})}
+                        onChange={e => setCompanyForm({ ...companyForm, timeline: e.target.value })}
                         placeholder="e.g. Practical Experience, Selection Merit"
                         className="w-full px-4 py-3 rounded-xl border border-white/5 bg-black/40 text-sm focus:outline-none focus:border-[#d946ef]/30"
                       />
@@ -799,22 +799,22 @@ const Dashboard = () => {
 
                   <div className="space-y-2">
                     <label className="text-[10px] font-mono uppercase tracking-widest text-slate-400">Description</label>
-                    <textarea 
+                    <textarea
                       rows={3}
                       required
                       value={companyForm.description}
-                      onChange={e => setCompanyForm({...companyForm, description: e.target.value})}
+                      onChange={e => setCompanyForm({ ...companyForm, description: e.target.value })}
                       className="w-full px-4 py-3 rounded-xl border border-white/5 bg-black/40 text-sm focus:outline-none focus:border-[#d946ef]/30"
                     />
                   </div>
 
                   <div className="space-y-2">
                     <label className="text-[10px] font-mono uppercase tracking-widest text-slate-400">Highlights / Tags (Comma separated: Full-Stack, AI Integrations)</label>
-                    <input 
-                      type="text" 
+                    <input
+                      type="text"
                       required
                       value={companyForm.highlights}
-                      onChange={e => setCompanyForm({...companyForm, highlights: e.target.value})}
+                      onChange={e => setCompanyForm({ ...companyForm, highlights: e.target.value })}
                       placeholder="e.g. Technical Aptitude, Industry-grade"
                       className="w-full px-4 py-3 rounded-xl border border-white/5 bg-black/40 text-sm focus:outline-none focus:border-[#d946ef]/30"
                     />
@@ -824,20 +824,20 @@ const Dashboard = () => {
                   <div className="space-y-2">
                     <label className="text-[10px] font-mono uppercase tracking-widest text-slate-400">Company Logo</label>
                     <div className="flex items-center gap-4">
-                      <input 
-                        type="text" 
+                      <input
+                        type="text"
                         required
                         value={companyForm.logo}
-                        onChange={e => setCompanyForm({...companyForm, logo: e.target.value})}
+                        onChange={e => setCompanyForm({ ...companyForm, logo: e.target.value })}
                         placeholder="Path to logo image (or upload below)"
                         className="flex-1 px-4 py-3 rounded-xl border border-white/5 bg-black/40 text-sm focus:outline-none focus:border-[#d946ef]/30"
                       />
                       <label className="px-4 py-3 rounded-xl border border-white/10 bg-white/5 hover:bg-white/10 text-xs font-bold uppercase tracking-wider flex items-center gap-1.5 cursor-pointer transition-colors">
                         <Upload size={14} /> Upload Logo
-                        <input 
-                          type="file" 
+                        <input
+                          type="file"
                           accept="image/*"
-                          className="hidden" 
+                          className="hidden"
                           onChange={e => handleFileUpload(e, 'company')}
                         />
                       </label>
@@ -934,21 +934,21 @@ const Dashboard = () => {
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div className="space-y-2">
                       <label className="text-[10px] font-mono uppercase tracking-widest text-slate-400">Category Title (e.g. Frontend, Backend)</label>
-                      <input 
-                        type="text" 
+                      <input
+                        type="text"
                         required
                         value={skillForm.title}
-                        onChange={e => setSkillForm({...skillForm, title: e.target.value})}
+                        onChange={e => setSkillForm({ ...skillForm, title: e.target.value })}
                         className="w-full px-4 py-3 rounded-xl border border-white/5 bg-black/40 text-sm focus:outline-none focus:border-[#d946ef]/30"
                       />
                     </div>
                     <div className="space-y-2">
                       <label className="text-[10px] font-mono uppercase tracking-widest text-slate-400">Category Lucide Icon Name (e.g. Layers, Database)</label>
-                      <input 
-                        type="text" 
+                      <input
+                        type="text"
                         required
                         value={skillForm.icon}
-                        onChange={e => setSkillForm({...skillForm, icon: e.target.value})}
+                        onChange={e => setSkillForm({ ...skillForm, icon: e.target.value })}
                         placeholder="e.g. Layers, Database, Smartphone, GitBranch"
                         className="w-full px-4 py-3 rounded-xl border border-white/5 bg-black/40 text-sm focus:outline-none focus:border-[#d946ef]/30"
                       />
@@ -959,7 +959,7 @@ const Dashboard = () => {
                     <label className="text-[10px] font-mono uppercase tracking-widest text-slate-400">Timeline / Category Alignment Side</label>
                     <select
                       value={skillForm.side}
-                      onChange={e => setSkillForm({...skillForm, side: e.target.value})}
+                      onChange={e => setSkillForm({ ...skillForm, side: e.target.value })}
                       className="w-full px-4 py-3 rounded-xl border border-white/5 bg-black/40 text-sm focus:outline-none focus:border-[#d946ef]/30 text-white"
                     >
                       <option value="left" className="bg-[#050208]">Left Alignment (Odd Rows)</option>
@@ -969,12 +969,12 @@ const Dashboard = () => {
 
                   <div className="space-y-2">
                     <label className="text-[10px] font-mono uppercase tracking-widest text-slate-400">Skills list (Format as "SkillName:IconName" separated by commas)</label>
-                    <textarea 
+                    <textarea
                       rows={3}
                       required
                       placeholder="React:Cpu, TypeScript:Code2, Next.js:Globe, Tailwind:Layers"
                       value={skillForm.skillsList}
-                      onChange={e => setSkillForm({...skillForm, skillsList: e.target.value})}
+                      onChange={e => setSkillForm({ ...skillForm, skillsList: e.target.value })}
                       className="w-full px-4 py-3 rounded-xl border border-white/5 bg-black/40 text-sm placeholder-slate-600 focus:outline-none focus:border-[#d946ef]/30 font-mono"
                     />
                   </div>
@@ -1049,33 +1049,33 @@ const Dashboard = () => {
               <form onSubmit={handlePasswordSubmit} className="space-y-6 max-w-md">
                 <div className="space-y-2">
                   <label className="text-[10px] font-mono uppercase tracking-widest text-slate-400">Current Password</label>
-                  <input 
-                    type="password" 
+                  <input
+                    type="password"
                     required
                     value={passwordForm.currentPassword}
-                    onChange={e => setPasswordForm({...passwordForm, currentPassword: e.target.value})}
+                    onChange={e => setPasswordForm({ ...passwordForm, currentPassword: e.target.value })}
                     className="w-full px-4 py-3 rounded-xl border border-white/5 bg-black/40 text-sm focus:outline-none focus:border-[#d946ef]/30"
                   />
                 </div>
 
                 <div className="space-y-2">
                   <label className="text-[10px] font-mono uppercase tracking-widest text-slate-400">New Password</label>
-                  <input 
-                    type="password" 
+                  <input
+                    type="password"
                     required
                     value={passwordForm.newPassword}
-                    onChange={e => setPasswordForm({...passwordForm, newPassword: e.target.value})}
+                    onChange={e => setPasswordForm({ ...passwordForm, newPassword: e.target.value })}
                     className="w-full px-4 py-3 rounded-xl border border-white/5 bg-black/40 text-sm focus:outline-none focus:border-[#d946ef]/30"
                   />
                 </div>
 
                 <div className="space-y-2">
                   <label className="text-[10px] font-mono uppercase tracking-widest text-slate-400">Confirm New Password</label>
-                  <input 
-                    type="password" 
+                  <input
+                    type="password"
                     required
                     value={passwordForm.confirmPassword}
-                    onChange={e => setPasswordForm({...passwordForm, confirmPassword: e.target.value})}
+                    onChange={e => setPasswordForm({ ...passwordForm, confirmPassword: e.target.value })}
                     className="w-full px-4 py-3 rounded-xl border border-white/5 bg-black/40 text-sm focus:outline-none focus:border-[#d946ef]/30"
                   />
                 </div>

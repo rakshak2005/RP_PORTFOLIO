@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Github, Linkedin, Instagram, Twitter, Download, Sparkles, MousePointer2 } from 'lucide-react';
+import { Link } from 'react-router-dom';
 import mainImg from '@/assets/hero.jpeg';
 import { API_URL } from '../config';
 import { fetchWithCache } from '../lib/cache';
@@ -65,7 +66,7 @@ const Hero = () => {
   };
 
   return (
-    <section id="home" className="relative min-h-screen lg:h-screen flex items-start lg:items-center justify-center bg-[#050208] overflow-hidden px-6 pt-32 sm:pt-36 lg:pt-16 pb-12">
+    <section id="home" className="relative min-h-screen lg:h-screen flex items-start lg:items-center justify-center bg-[#050208] overflow-hidden px-6 pt-32 sm:pt-36 lg:pt-28 pb-12">
 
       {/* Background glow layers */}
       <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full h-full pointer-events-none">
@@ -119,6 +120,16 @@ const Hero = () => {
                   </span>
                 </a>
               )}
+
+              <Link
+                to="/projects"
+                className="group relative px-6 py-4 overflow-hidden rounded-full bg-white text-black font-black uppercase tracking-widest text-[10px] transition-all duration-300 hover:-translate-y-0.5 hover:shadow-[0_0_20px_rgba(217,70,239,0.4)]"
+              >
+                <div className="absolute inset-0 bg-[#d946ef] translate-y-full group-hover:translate-y-0 transition-transform duration-300" />
+                <span className="relative z-10 flex items-center gap-1.5 group-hover:text-white">
+                  My Projects <Sparkles size={14} className="text-[#d946ef] group-hover:text-white group-hover:rotate-12 transition-transform duration-300" />
+                </span>
+              </Link>
 
               <div className="flex items-center gap-3">
                 {[

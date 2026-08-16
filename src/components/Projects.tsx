@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { ExternalLink, Github, Sparkles, Globe } from 'lucide-react';
+import { Link } from 'react-router-dom';
 import { API_URL } from '../config';
 import { fetchWithCache } from '../lib/cache';
 
@@ -65,29 +66,29 @@ const Projects = () => {
   }, []);
 
   return (
-    <section id="projects" className="py-32 bg-[#050208] text-white overflow-hidden">
+    <section id="projects" className="py-16 bg-[#050208] text-white overflow-hidden">
       <div className="max-w-7xl mx-auto px-6">
         
-        <div className="flex flex-col md:flex-row justify-between items-end mb-20 gap-6">
+        <div className="flex flex-col md:flex-row justify-between items-end mb-10 gap-6">
           <div className="max-w-xl w-full">
-            <div className="flex items-center gap-2 text-[#d946ef] mb-4">
-              <Sparkles size={18} />
-              <span className="uppercase tracking-[0.3em] text-xs font-bold">Selected Works</span>
+            <div className="flex items-center gap-2 text-[#d946ef] mb-3">
+              <Sparkles size={16} />
+              <span className="uppercase tracking-[0.3em] text-[10px] font-bold">Selected Works</span>
             </div>
-            <h2 className="text-4xl sm:text-5xl md:text-7xl font-black tracking-tighter leading-[0.85] md:leading-none">
+            <h2 className="text-3xl sm:text-4xl md:text-5xl font-black tracking-tighter leading-[0.9] md:leading-none">
               DIGITAL <br /> <span className="text-[#d946ef]">CRAFTSMANSHIP</span>
             </h2>
           </div>
-          <p className="text-slate-400 text-base md:text-lg max-w-sm font-light leading-relaxed">
+          <p className="text-slate-400 text-sm md:text-base max-w-sm font-light leading-relaxed">
             Live interactive previews of systems built to solve real-world problems.
           </p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
-          {projects.map((project) => (
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+          {projects.slice(0, 4).map((project) => (
             <div 
               key={project._id}
-              className="group relative flex flex-col bg-[#0a0510] border border-white/5 overflow-hidden transition-all duration-500 hover:border-[#d946ef]/30"
+              className="group relative flex flex-col bg-[#0a0510] border border-white/5 overflow-hidden transition-all duration-500 hover:border-[#d946ef]/30 rounded-3xl"
             >
               <div className="relative aspect-video w-full bg-black overflow-hidden border-b border-white/5">
                 <div className="absolute inset-0 z-20 pointer-events-none bg-gradient-to-b from-transparent via-transparent to-[#0a0510] opacity-0 group-hover:opacity-100 transition-opacity duration-700" />
@@ -117,13 +118,13 @@ const Projects = () => {
                 )}
               </div>
 
-              <div className="p-10">
-                <div className="flex justify-between items-start mb-6">
+              <div className="p-6">
+                <div className="flex justify-between items-start mb-4">
                   <div>
-                    <span className="text-[#d946ef] text-[10px] font-black tracking-widest uppercase mb-2 block">
+                    <span className="text-[#d946ef] text-[9px] font-black tracking-widest uppercase mb-1 block">
                       {project.category}
                     </span>
-                    <h3 className="text-4xl font-bold tracking-tighter">
+                    <h3 className="text-2xl font-bold tracking-tighter">
                       {project.title}
                     </h3>
                   </div>
@@ -151,7 +152,7 @@ const Projects = () => {
                   </div>
                 </div>
 
-                <p className="text-slate-400 text-sm leading-relaxed mb-8 font-light max-w-md">
+                <p className="text-slate-400 text-xs leading-relaxed mb-5 font-light max-w-md">
                   {project.description}
                 </p>
 
@@ -170,13 +171,13 @@ const Projects = () => {
           ))}
         </div>
 
-        <div className="mt-24 flex justify-center">
-          <button className="group relative px-12 py-5 overflow-hidden border border-white/10 bg-white/[0.02] transition-all">
+        <div className="mt-12 flex justify-center">
+          <Link to="/projects" className="group relative px-10 py-4 overflow-hidden border border-white/10 bg-white/[0.02] transition-all rounded-full">
             <div className="absolute inset-0 bg-[#d946ef] translate-y-[101%] group-hover:translate-y-0 transition-transform duration-500" />
-            <span className="relative z-10 text-xs font-black uppercase tracking-[0.3em] group-hover:text-white transition-colors">
+            <span className="relative z-10 text-[10px] font-black uppercase tracking-[0.3em] group-hover:text-white transition-colors">
               Archive of all works
             </span>
-          </button>
+          </Link>
         </div>
       </div>
     </section>
