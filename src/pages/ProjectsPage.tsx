@@ -4,6 +4,7 @@ import { Link } from 'react-router-dom';
 import Footer from '@/components/Footer';
 import { API_URL } from '../config';
 import { fetchWithCache } from '../lib/cache';
+import bmwImg from '@/assets/bmw.jpg';
 
 const IframePreview = ({ src, title }: { src: string; title: string }) => {
   const containerRef = useRef<HTMLDivElement>(null);
@@ -39,8 +40,9 @@ const IframePreview = ({ src, title }: { src: string; title: string }) => {
           transform: `scale(${scale})`,
           transformOrigin: 'top left',
         }}
-        className="absolute top-0 left-0 border-none pointer-events-none group-hover:pointer-events-auto transition-transform duration-700"
+        className="absolute top-0 left-0 border-none transition-transform duration-700"
         loading="lazy"
+        scrolling="no"
       />
     </div>
   );
@@ -49,13 +51,23 @@ const IframePreview = ({ src, title }: { src: string; title: string }) => {
 const ProjectsPage = () => {
   const staticProjects = [
     {
-      _id: "1",
-      title: "THINKSHIFT",
-      category: "Mobile App",
-      description: "A location-intelligent reminder system built for modern efficiency.",
-      demoLink: "https://think-shift-kappa.vercel.app/",
-      technologies: ["Flutter", "Dart", "Node.js", "MongoDB"],
+      _id: "0",
+      title: "Carrer iq",
+      category: "AI Platform",
+      description: "AI-powered career analysis platform that evaluates resumes, GitHub profiles, and projects to generate a comprehensive employability score.",
+      demoLink: "https://carrer-iq.vercel.app/",
+      technologies: ["Next.js", "React", "TypeScript", "Tailwind CSS", "Node.js", "Express.js", "MongoDB", "Firebase", "OpenAI API", "GitHub API", "Vercel"],
       githubLink: "https://github.com/rakshak2005",
+      image: ""
+    },
+    {
+      _id: "5",
+      title: "OpsSphere",
+      category: "SaaS Tool",
+      description: "A high-performance enterprise operations panel combining ERP workflows, real-time CRM tracking, inventory monitoring, and business analytics into a single responsive hub.",
+      demoLink: "https://ops-sphere.vercel.app/",
+      technologies: ["React", "Tailwind CSS", "Node.js", "Express", "MongoDB"],
+      githubLink: "https://github.com/rakshak2005/OpsSphere",
       image: ""
     },
     {
@@ -69,14 +81,34 @@ const ProjectsPage = () => {
       image: ""
     },
     {
-      _id: "3",
-      title: "SHIKSHA SETHU",
-      category: "Mobile App",
-      description: "A location-intelligent reminder system built for modern efficiency.",
-      demoLink: "https://siksha-sethu.vercel.app/", 
-      technologies: ["Flutter", "Dart", "Node.js", "MongoDB"],
-      githubLink: "https://github.com/rakshak2005",
+      _id: "10",
+      title: "SiskshaSethu (Updated)",
+      category: "Web App",
+      description: "A unified search aggregator that continuously fetches, categorizes, and updates available scholarships and internships globally to streamline student applications.",
+      demoLink: "https://siskshasethu.vercel.app/",
+      technologies: ["Flutter", "Dart", "Node.js", "MongoDB", "Web Scraping"],
+      githubLink: "https://github.com/rakshak2005/SiskshaSethu",
       image: ""
+    },
+    {
+      _id: "9",
+      title: "Out-OF-OFFICE",
+      category: "Web App",
+      description: "A full-stack enterprise leave management portal featuring dynamic request pipelines, holiday calendars, balance tracking, and role-based approval dashboards.",
+      demoLink: "https://out-of-office-xi.vercel.app/",
+      technologies: ["React", "Node.js", "Express", "MongoDB", "Tailwind CSS"],
+      githubLink: "https://github.com/rakshak2005/OUT-OF-OFFICE",
+      image: ""
+    },
+    {
+      _id: "6",
+      title: "BMW SCROLL EXPERIENCE",
+      category: "Web App",
+      description: "An immersive landing page utilizing advanced scroll-driven animations, high-fidelity asset rendering, and cinematic typography to showcase BMW performance models.",
+      demoLink: "https://bmw-scroll-experience.vercel.app/",
+      technologies: ["React", "Framer Motion", "Tailwind CSS", "Three.js"],
+      githubLink: "https://github.com/rakshak2005/BMW---Scroll---Experience",
+      image: bmwImg
     },
     {
       _id: "4",
@@ -88,6 +120,86 @@ const ProjectsPage = () => {
       githubLink: "https://github.com/rakshak2005",
       image: ""
     },
+    {
+      _id: "1",
+      title: "THINKSHIFT",
+      category: "Mobile App",
+      description: "A location-intelligent reminder system built for modern efficiency.",
+      demoLink: "https://think-shift-kappa.vercel.app/",
+      technologies: ["Flutter", "Dart", "Node.js", "MongoDB"],
+      githubLink: "https://github.com/rakshak2005",
+      image: ""
+    },
+    {
+      _id: "8",
+      title: "The Wine Store",
+      category: "Web App",
+      description: "A premium, elegant e-commerce landing page designed for a boutique wine collection, featuring modern filters, vintage galleries, and seamless cart flows.",
+      demoLink: "https://thewinestore.vercel.app/",
+      technologies: ["React", "Vite", "Tailwind CSS", "Framer Motion"],
+      githubLink: "https://github.com/rakshak2005/THEWINESTORE",
+      image: ""
+    },
+    {
+      _id: "7",
+      title: "Commander",
+      category: "AI Platform",
+      description: "An advanced, futuristic dashboard-style personal operating system panel designed for real-time collaboration, cloud storage, password management, and artificial intelligence integration.",
+      demoLink: "https://commander-lime.vercel.app/",
+      technologies: ["React 19", "Vite", "Tailwind CSS", "Framer Motion", "Firebase", "Gemini API"],
+      githubLink: "https://github.com/rakshak2005/Commander",
+      image: ""
+    },
+    {
+      _id: "3",
+      title: "SHIKSHA SETHU",
+      category: "Mobile App",
+      description: "A location-intelligent reminder system built for modern efficiency.",
+      demoLink: "https://siksha-sethu.vercel.app/", 
+      technologies: ["Flutter", "Dart", "Node.js", "MongoDB"],
+      githubLink: "https://github.com/rakshak2005",
+      image: ""
+    },
+    {
+      _id: "11",
+      title: "The Quizler",
+      category: "Mobile App",
+      description: "An interactive, gamified IQ testing application built with Flutter featuring time-attack quizzes, cognitive assessment tracking, and global leaderboard rankings.",
+      demoLink: "https://quizler-the-iq-checker.vercel.app/",
+      technologies: ["Flutter", "Dart", "Firebase", "State Management"],
+      githubLink: "https://github.com/rakshak2005/Quizler-The-IQ-Checker-",
+      image: ""
+    },
+    {
+      _id: "12",
+      title: "Netflix Clone",
+      category: "Web App",
+      description: "A high-fidelity Netflix mockup dashboard featuring dynamic category galleries, preview carousels, and responsive video players fetching live media feeds.",
+      demoLink: "https://netflixclone-six-iota.vercel.app/",
+      technologies: ["React", "Tailwind CSS", "TMDB API", "Firebase"],
+      githubLink: "https://github.com/rakshak2005/Netflixweb-Clone",
+      image: ""
+    },
+    {
+      _id: "13",
+      title: "Tesla Web Clone",
+      category: "Web App",
+      description: "A responsive replication of the Tesla landing page, featuring custom full-page scroll transitions, snap layouts, and sleek navigation menus.",
+      demoLink: "https://teslaclone-pied.vercel.app/",
+      technologies: ["React", "Tailwind CSS", "Framer Motion"],
+      githubLink: "https://github.com/rakshak2005/TeslaWEB-Clone",
+      image: ""
+    },
+    {
+      _id: "14",
+      title: "Amazon Clone",
+      category: "Web App",
+      description: "A responsive Amazon e-commerce clone featuring interactive shopping carts, user profile panels, product categories, and mock checkout flows.",
+      demoLink: "https://amazonclone-five-chi.vercel.app/",
+      technologies: ["React", "Tailwind CSS", "Firebase Auth", "Context API"],
+      githubLink: "https://github.com/rakshak2005/Amazon-Clone",
+      image: ""
+    }
   ];
 
   const [projects, setProjects] = useState<any[]>([]);
@@ -99,7 +211,36 @@ const ProjectsPage = () => {
       `${API_URL}/api/projects`,
       (data) => {
         if (data && data.length > 0) {
-          setProjects(data.filter((p: any) => !p.isHidden));
+          const dbProjects = data.filter((p: any) => !p.isHidden);
+          const merged = [...dbProjects];
+          
+          staticProjects.forEach((staticProj) => {
+            const exists = dbProjects.some(
+              (dbProj: any) => dbProj.title.toLowerCase() === staticProj.title.toLowerCase()
+            );
+            if (!exists) {
+              merged.push(staticProj);
+            }
+          });
+
+          // Sort merged list based on the order in staticProjects
+          merged.sort((a, b) => {
+            const indexA = staticProjects.findIndex(
+              (p) => p.title.toLowerCase() === a.title.toLowerCase()
+            );
+            const indexB = staticProjects.findIndex(
+              (p) => p.title.toLowerCase() === b.title.toLowerCase()
+            );
+            
+            if (indexA !== -1 && indexB !== -1) {
+              return indexA - indexB;
+            }
+            if (indexA !== -1) return -1;
+            if (indexB !== -1) return 1;
+            return 0;
+          });
+
+          setProjects(merged);
         } else {
           setProjects(staticProjects);
         }
@@ -228,22 +369,7 @@ const ProjectsPage = () => {
                       className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
                     />
                   ) : (
-                    <>
-                      {/* Premium Procedural Mockup fallback */}
-                      <div className="absolute inset-0 z-10 bg-[#050208]/80 backdrop-blur-sm group-hover:backdrop-blur-none group-hover:bg-transparent transition-all duration-1000 flex items-center justify-center pointer-events-none">
-                        <div className="flex flex-col items-center gap-2 group-hover:opacity-0 transition-opacity duration-500">
-                          <div className="p-2.5 rounded-full bg-[#d946ef]/5 border border-[#d946ef]/20 animate-pulse">
-                            <Globe className="text-[#d946ef]" size={20} />
-                          </div>
-                          <span className="text-[7px] uppercase tracking-[0.4em] font-bold text-slate-400">Hover to expand</span>
-                        </div>
-                      </div>
-
-                      {/* Micro background matrix grid for aesthetics */}
-                      <div className="absolute inset-0 bg-dots opacity-20 pointer-events-none" />
-
-                      <IframePreview src={project.demoLink} title={project.title} />
-                    </>
+                    <IframePreview src={project.demoLink} title={project.title} />
                   )}
                 </div>
 
@@ -279,8 +405,10 @@ const ProjectsPage = () => {
                       </div>
                     </div>
 
-                    <p className="text-slate-400 text-[11px] leading-relaxed mb-4 font-light max-w-md">
-                      {project.description}
+                    <p className="text-slate-400 text-[11px] leading-relaxed mb-4 font-light max-w-md line-clamp-2" title={project.description}>
+                      {project.title.toLowerCase() === 'carrer iq' || project.title.toLowerCase() === 'career iq'
+                        ? "AI-powered career analysis platform that evaluates resumes, GitHub profiles, and projects to generate a comprehensive employability score."
+                        : project.description}
                     </p>
                   </div>
 

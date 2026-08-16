@@ -1,5 +1,7 @@
 # RP Portfolio • Full-Stack Developer Platform
 
+![Portfolio Preview](preview.png)
+
 This is my developer portfolio, featuring selected work showcases, dynamic client listings, interactive live preview sandboxes, and a full-featured admin console to manage projects, skills, and resume data on the fly. 
 
 It's designed with glassmorphism aesthetics, neon accent glows, and smooth responsive grids.
