@@ -4,6 +4,7 @@ import { Link } from 'react-router-dom';
 import { API_URL } from '../config';
 import { fetchWithCache } from '../lib/cache';
 import bmwImg from '@/assets/bmw.jpg';
+import netflixImg from '@/assets/netflix.png';
 
 const IframePreview = ({ src, title }: { src: string; title: string }) => {
   const containerRef = useRef<HTMLDivElement>(null);
@@ -176,7 +177,7 @@ const Projects = () => {
       demoLink: "https://netflixclone-six-iota.vercel.app/",
       technologies: ["React", "Tailwind CSS", "TMDB API", "Firebase"],
       githubLink: "https://github.com/rakshak2005/Netflixweb-Clone",
-      image: ""
+      image: netflixImg
     },
     {
       _id: "13",
