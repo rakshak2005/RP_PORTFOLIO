@@ -6,6 +6,10 @@ This is my developer portfolio, featuring selected work showcases, dynamic clien
 
 It's designed with glassmorphism aesthetics, neon accent glows, and smooth responsive grids.
 
+🔗 **Live Links:**
+- **Portfolio Homepage**: [rp-portfolio-olbv.vercel.app](https://rp-portfolio-olbv.vercel.app/)
+- **Projects Showcase Page**: [rp-portfolio-olbv.vercel.app/projects](https://rp-portfolio-olbv.vercel.app/projects)
+
 ---
 
 ## ⚡ Quick Start
