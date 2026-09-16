@@ -70,6 +70,16 @@ const Projects = () => {
       image: ""
     },
     {
+      _id: "15",
+      title: "Transit ERP",
+      category: "SaaS Tool",
+      description: "A centralized multi-warehouse supply chain and stock management ERP featuring real-time branch routing, stock transfer pipelines, and inventory reservations.",
+      demoLink: "https://transit-erp.vercel.app/",
+      technologies: ["React", "TypeScript", "Tailwind CSS", "Node.js", "Express", "MongoDB"],
+      githubLink: "https://github.com/rakshak2005",
+      image: ""
+    },
+    {
       _id: "2",
       title: "Campus Connect",
       category: "AI Platform",

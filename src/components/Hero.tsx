@@ -11,7 +11,7 @@ const Hero = () => {
     name: "RAKSHAK",
     subtitle: "Full-Stack Developer specializing in AI, scalable systems, and modern web applications.",
     description: "Engineering high-performance digital architectures where logic meets aesthetics. Specializing in scalable full-stack ecosystems.",
-    resumeLink: "https://drive.google.com/file/d/18c-63HXD1zYQ7wdPW5LrmUAqtdhCqF6z/view?usp=sharing",
+    resumeLink: "https://drive.google.com/file/d/1PhD9iE6-IMEnAYbqOkVwafMYmzgKLKmT/view?usp=sharing",
     githubLink: "https://github.com/rakshak2005",
     linkedinLink: "https://www.linkedin.com/in/rakshak-patel-v-12b2b624a",
     instagramLink: "https://www.instagram.com/rakshak_2005",

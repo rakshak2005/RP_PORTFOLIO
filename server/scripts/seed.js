@@ -54,7 +54,7 @@ const seedData = async () => {
       name: "RAKSHAK",
       subtitle: "Full-stack Web and App Developer.",
       description: "Engineering high-performance digital architectures where logic meets aesthetics. Specializing in scalable full-stack ecosystems.",
-      resumeLink: "https://drive.google.com/file/d/18c-63HXD1zYQ7wdPW5LrmUAqtdhCqF6z/view?usp=sharing",
+      resumeLink: "https://drive.google.com/file/d/1PhD9iE6-IMEnAYbqOkVwafMYmzgKLKmT/view?usp=sharing",
       githubLink: "https://github.com/rakshak2005",
       linkedinLink: "https://www.linkedin.com/in/rakshak-patel-v-12b2b624a",
       instagramLink: "https://www.instagram.com/rakshak_2005",
@@ -65,6 +65,14 @@ const seedData = async () => {
 
     // 3. Seed Projects
     const projects = [
+      {
+        title: "Transit ERP",
+        category: "SaaS Tool",
+        description: "A centralized multi-warehouse supply chain and stock management ERP featuring real-time branch routing, stock transfer pipelines, and inventory reservations.",
+        demoLink: "https://transit-erp.vercel.app/",
+        technologies: ["React", "TypeScript", "Tailwind CSS", "Node.js", "Express", "MongoDB"],
+        githubLink: "https://github.com/rakshak2005"
+      },
       {
         title: "THINKSHIFT",
         category: "Mobile App",
