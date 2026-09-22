@@ -66,6 +66,22 @@ const seedData = async () => {
     // 3. Seed Projects
     const projects = [
       {
+        title: "GMPX",
+        category: "SaaS Tool",
+        description: "Indian IPO market intelligence platform featuring real-time Grey Market Premium (GMP) tracking, pulse analysis, allotment monitoring, and portfolio gain calculations.",
+        demoLink: "https://gmpx-track-monitor-calculate.vercel.app/",
+        technologies: ["React", "TypeScript", "Tailwind CSS", "Vite", "REST API", "Financial Analytics"],
+        githubLink: "https://github.com/rakshak2005"
+      },
+      {
+        title: "GeoBuzz",
+        category: "Mobile App",
+        description: "Automate by location. Intelligent location-based automation system triggering customized actions, alarms, sound profiles, and tasks upon entering or leaving geofenced areas.",
+        demoLink: "https://geobuzz-app.vercel.app/",
+        technologies: ["Flutter", "Dart", "Firebase", "Geolocation", "PWA"],
+        githubLink: "https://github.com/rakshak2005"
+      },
+      {
         title: "Transit ERP",
         category: "SaaS Tool",
         description: "A centralized multi-warehouse supply chain and stock management ERP featuring real-time branch routing, stock transfer pipelines, and inventory reservations.",
