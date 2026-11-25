@@ -13,6 +13,12 @@ export default defineConfig(({ mode }) => ({
   resolve: {
     alias: {
       "@": path.resolve(__dirname, "./src"),
+      three: "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js",
+    },
+  },
+  build: {
+    rollupOptions: {
+      external: ["three"],
     },
   },
 }));

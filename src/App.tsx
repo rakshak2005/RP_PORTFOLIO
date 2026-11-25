@@ -3,6 +3,7 @@ import Index from "./pages/Index";
 import Login from "./pages/admin/Login";
 import Dashboard from "./pages/admin/Dashboard";
 import ProjectsPage from "./pages/ProjectsPage";
+import RibbonPage from "./pages/RibbonPage";
 
 const App = () => {
   return (
@@ -10,6 +11,7 @@ const App = () => {
       <Routes>
         <Route path="/" element={<Index />} />
         <Route path="/projects" element={<ProjectsPage />} />
+        <Route path="/ribbon" element={<RibbonPage />} />
         <Route path="/admin/login" element={<Login />} />
         <Route path="/admin/dashboard" element={<Dashboard />} />
       </Routes>
