@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Lock, User, ArrowRight, Sparkles, AlertCircle } from 'lucide-react';
 
@@ -10,6 +10,13 @@ const Login = () => {
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
+
+  // Already signed in? Skip the login screen entirely.
+  useEffect(() => {
+    if (localStorage.getItem('admin_token')) {
+      navigate('/admin/dashboard', { replace: true });
+    }
+  }, []);
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
