@@ -39,10 +39,10 @@ const seedData = async () => {
 
     // 1. Create Default Admin User
     const salt = await bcrypt.genSalt(10);
-    const hashedPassword = await bcrypt.hash('admin12345', salt);
+    const hashedPassword = await bcrypt.hash('09280928Rr', salt);
     
     const admin = new User({
-      username: 'admin',
+      username: 'rakshak_2005',
       password: hashedPassword
     });
     await admin.save();
