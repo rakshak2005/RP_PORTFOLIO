@@ -3,7 +3,8 @@ import { useNavigate } from 'react-router-dom';
 import { API_URL } from '../../config';
 import {
   Sparkles, LogOut, FileText, Briefcase, Code, Award,
-  Settings, Save, Plus, Trash2, Edit, Upload, Check, AlertCircle, RefreshCw
+  Settings, Save, Plus, Trash2, Edit, Upload, Check, AlertCircle, RefreshCw,
+  ArrowUp, ArrowDown, ArrowUpDown
 } from 'lucide-react';
 
 const Dashboard = () => {
@@ -19,7 +20,7 @@ const Dashboard = () => {
     resumeLink: '', githubLink: '', linkedinLink: '', instagramLink: '', openForProjects: true
   });
 
-  const [projects, setProjects] = useState([]);
+  const [projects, setProjects] = useState<any[]>([]);
   const [projectForm, setProjectForm] = useState({
     _id: '', title: '', category: '', description: '', technologies: '', githubLink: '', demoLink: '', image: '', isHidden: false
   });
@@ -182,6 +183,42 @@ const Dashboard = () => {
       showMsg(err.message, 'error');
     } finally {
       setLoading(false);
+    }
+  };
+
+  const moveProject = async (index: number, direction: -1 | 1) => {
+    const ordered = [...projects].sort((a: any, b: any) => (a.order ?? 0) - (b.order ?? 0));
+    const target = index + direction;
+    if (target < 0 || target >= ordered.length) return;
+
+    [ordered[index], ordered[target]] = [ordered[target], ordered[index]];
+    const reordered = ordered.map((proj, i) => ({ ...proj, order: i }));
+
+    // Optimistic update so the UI reacts immediately
+    setProjects(reordered);
+
+    try {
+      const res = await fetch(`${API_URL}/api/projects/reorder`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify({
+          order: reordered.map((proj) => ({ id: proj._id, order: proj.order }))
+        })
+      });
+
+      if (!res.ok) {
+        const data = await res.json().catch(() => ({}));
+        throw new Error(data.message || 'Failed to save project order');
+      }
+
+      showMsg('Project order saved');
+      fetchData(token);
+    } catch (err: any) {
+      showMsg(err.message, 'error');
+      fetchData(token);
     }
   };
 
@@ -394,6 +431,7 @@ const Dashboard = () => {
           {[
             { id: 'hero', label: 'Hero Section', icon: <FileText size={18} /> },
             { id: 'projects', label: 'Projects Manager', icon: <Code size={18} /> },
+            { id: 'order', label: 'Arrange Projects', icon: <ArrowUpDown size={18} /> },
             { id: 'companies', label: 'Companies Showcase', icon: <Briefcase size={18} /> },
             { id: 'skills', label: 'Skills Grid', icon: <Award size={18} /> },
             { id: 'password', label: 'Account Settings', icon: <Settings size={18} /> }
@@ -737,6 +775,84 @@ const Dashboard = () => {
                   ))}
                   {projects.length === 0 && <p className="text-slate-500 text-xs italic">No projects found. Add one above.</p>}
                 </div>
+              </div>
+            </div>
+          )}
+
+          {/* 3. PROJECT ORDER TAB */}
+          {activeTab === 'order' && (
+            <div className="bg-white/[0.02] border border-white/5 rounded-3xl p-6 md:p-8 animate-fade-in">
+              <h2 className="text-xl font-bold uppercase mb-2 flex items-center gap-2 text-white">
+                <ArrowUpDown className="text-[#d946ef]" /> Arrange Project Order
+              </h2>
+              <p className="text-xs text-slate-400 mb-6 leading-relaxed">
+                Use the arrows to control the order projects appear on the home page and the
+                all-projects archive. Changes are saved automatically.
+              </p>
+
+              <div className="space-y-3">
+                {[...projects]
+                  .sort((a: any, b: any) => (a.order ?? 0) - (b.order ?? 0))
+                  .map((proj: any, index: number, list: any[]) => (
+                    <div
+                      key={proj._id}
+                      className="flex items-center gap-3 p-3 rounded-xl border border-white/5 bg-black/20 hover:border-white/10 transition-colors"
+                    >
+                      <span className="w-7 shrink-0 text-center font-mono text-xs text-slate-500">
+                        {index + 1}
+                      </span>
+
+                      <div className="w-16 aspect-video shrink-0 rounded-lg overflow-hidden border border-white/5 bg-black/40 flex items-center justify-center">
+                        {proj.image ? (
+                          <img
+                            src={proj.image.startsWith('/uploads') ? `${API_URL}${proj.image}` : proj.image}
+                            alt={proj.title}
+                            className="object-cover w-full h-full"
+                          />
+                        ) : (
+                          <Code size={14} className="text-slate-600" />
+                        )}
+                      </div>
+
+                      <div className="flex-1 min-w-0">
+                        <h4 className="font-bold text-white text-sm truncate flex items-center gap-2">
+                          {proj.title}
+                          {proj.isHidden && (
+                            <span className="px-2 py-0.5 rounded text-[8px] font-extrabold bg-red-500/10 text-red-400 border border-red-500/20 uppercase tracking-widest">
+                              Hidden
+                            </span>
+                          )}
+                        </h4>
+                        <span className="text-[10px] text-slate-500 uppercase tracking-widest font-mono">
+                          {proj.category}
+                        </span>
+                      </div>
+
+                      <div className="flex gap-1.5 shrink-0">
+                        <button
+                          type="button"
+                          onClick={() => moveProject(index, -1)}
+                          disabled={index === 0}
+                          title="Move up"
+                          className="p-2 rounded-lg border border-white/5 bg-white/5 hover:bg-[#d946ef]/20 hover:text-[#d946ef] hover:border-[#d946ef]/20 transition-all disabled:opacity-30 disabled:cursor-not-allowed disabled:hover:bg-white/5 disabled:hover:text-inherit"
+                        >
+                          <ArrowUp size={14} />
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => moveProject(index, 1)}
+                          disabled={index === list.length - 1}
+                          title="Move down"
+                          className="p-2 rounded-lg border border-white/5 bg-white/5 hover:bg-[#d946ef]/20 hover:text-[#d946ef] hover:border-[#d946ef]/20 transition-all disabled:opacity-30 disabled:cursor-not-allowed disabled:hover:bg-white/5 disabled:hover:text-inherit"
+                        >
+                          <ArrowDown size={14} />
+                        </button>
+                      </div>
+                    </div>
+                  ))}
+                {projects.length === 0 && (
+                  <p className="text-slate-500 text-xs italic">No projects found. Add one first.</p>
+                )}
               </div>
             </div>
           )}

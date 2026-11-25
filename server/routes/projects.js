@@ -4,14 +4,43 @@ import auth from '../middleware/auth.js';
 
 const router = express.Router();
 
-// Get all projects
+// Get all projects (manual order first, then newest)
 router.get('/', async (req, res) => {
   try {
-    const projects = await Project.find().sort({ createdAt: -1 });
+    const projects = await Project.find().sort({ order: 1, createdAt: -1 });
     res.json(projects);
   } catch (error) {
     console.error('Error in GET /api/projects:', error);
     res.status(500).json({ message: 'Server error' });
+  }
+});
+
+// Reorder projects (must be declared before /:id)
+router.put('/reorder', auth, async (req, res) => {
+  try {
+    const items = Array.isArray(req.body) ? req.body : req.body.order;
+    if (!Array.isArray(items) || items.length === 0) {
+      return res.status(400).json({ message: 'Expected a non-empty order array' });
+    }
+
+    const operations = items
+      .filter((item) => item && item.id)
+      .map((item) => ({
+        updateOne: {
+          filter: { _id: item.id },
+          update: { $set: { order: Number(item.order) || 0 } }
+        }
+      }));
+
+    if (operations.length === 0) {
+      return res.status(400).json({ message: 'No valid project ids supplied' });
+    }
+
+    await Project.bulkWrite(operations);
+    res.json({ message: 'Project order updated' });
+  } catch (error) {
+    console.error('Error in PUT /api/projects/reorder:', error);
+    res.status(400).json({ message: error.message });
   }
 });
 
@@ -20,6 +49,11 @@ router.post('/', auth, async (req, res) => {
   try {
     if (req.body._id === '') {
       delete req.body._id;
+    }
+    // Append new projects to the end of the manual order unless one is supplied
+    if (req.body.order === undefined || req.body.order === null || req.body.order === '') {
+      const last = await Project.findOne().sort({ order: -1 }).select('order');
+      req.body.order = last ? (Number(last.order) || 0) + 1 : 0;
     }
     const project = new Project(req.body);
     await project.save();

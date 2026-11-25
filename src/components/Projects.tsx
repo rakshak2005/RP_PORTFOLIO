@@ -1,51 +1,11 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect } from 'react';
 import { ExternalLink, Github, Sparkles, Globe } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { API_URL } from '../config';
 import { fetchWithCache } from '../lib/cache';
+import ProjectMedia from './ProjectMedia';
 import bmwImg from '@/assets/bmw.jpg';
 import netflixImg from '@/assets/netflix.png';
-
-const IframePreview = ({ src, title }: { src: string; title: string }) => {
-  const containerRef = useRef<HTMLDivElement>(null);
-  const [scale, setScale] = useState(1);
-
-  useEffect(() => {
-    const handleResize = () => {
-      if (containerRef.current) {
-        const containerWidth = containerRef.current.clientWidth;
-        setScale(containerWidth / 1280);
-      }
-    };
-
-    handleResize();
-    window.addEventListener('resize', handleResize);
-    const timer = setTimeout(handleResize, 100);
-
-    return () => {
-      window.removeEventListener('resize', handleResize);
-      clearTimeout(timer);
-    };
-  }, []);
-
-  return (
-    <div ref={containerRef} className="relative w-full h-full overflow-hidden bg-black">
-      <iframe
-        src={src}
-        title={title}
-        style={{
-          width: '1280px',
-          height: '720px',
-          transform: `scale(${scale})`,
-          transformOrigin: 'top left',
-        }}
-        className="absolute top-0 left-0 border-none transition-transform duration-700"
-        loading="lazy"
-        scrolling="no"
-      />
-    </div>
-  );
-};
 
 const Projects = () => {
   const staticProjects = [
@@ -238,9 +198,16 @@ const Projects = () => {
       `${API_URL}/api/projects`,
       (data) => {
         if (data && data.length > 0) {
-          const dbProjects = data.filter((p: any) => !p.isHidden);
+          const dbProjects = data
+            .filter((p: any) => !p.isHidden)
+            .sort((a: any, b: any) => {
+              const orderA = typeof a.order === 'number' ? a.order : Number.MAX_SAFE_INTEGER;
+              const orderB = typeof b.order === 'number' ? b.order : Number.MAX_SAFE_INTEGER;
+              if (orderA !== orderB) return orderA - orderB;
+              return new Date(b.createdAt || 0).getTime() - new Date(a.createdAt || 0).getTime();
+            });
           const merged = [...dbProjects];
-          
+
           staticProjects.forEach((staticProj) => {
             const exists = dbProjects.some(
               (dbProj: any) => dbProj.title.toLowerCase() === staticProj.title.toLowerCase()
@@ -250,23 +217,7 @@ const Projects = () => {
             }
           });
 
-          // Sort merged list based on the order in staticProjects
-          merged.sort((a, b) => {
-            const indexA = staticProjects.findIndex(
-              (p) => p.title.toLowerCase() === a.title.toLowerCase()
-            );
-            const indexB = staticProjects.findIndex(
-              (p) => p.title.toLowerCase() === b.title.toLowerCase()
-            );
-            
-            if (indexA !== -1 && indexB !== -1) {
-              return indexA - indexB;
-            }
-            if (indexA !== -1) return -1;
-            if (indexB !== -1) return 1;
-            return 0;
-          });
-
+          // Database projects keep their admin-defined order; static fallbacks follow.
           setProjects(merged);
         } else {
           setProjects(staticProjects);
@@ -311,15 +262,7 @@ const Projects = () => {
               <div className="relative aspect-video w-full bg-black overflow-hidden border-b border-white/5">
                 <div className="absolute inset-0 z-20 pointer-events-none bg-gradient-to-b from-transparent via-transparent to-[#0a0510] opacity-0 group-hover:opacity-100 transition-opacity duration-700" />
                 
-                {project.image ? (
-                  <img 
-                    src={project.image.startsWith('/uploads') ? `${API_URL}${project.image}` : project.image}
-                    alt={project.title}
-                    className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
-                  />
-                ) : (
-                  <IframePreview src={project.demoLink} title={project.title} />
-                )}
+                <ProjectMedia image={project.image} demoLink={project.demoLink} title={project.title} />
               </div>
 
               <div className="p-4 flex-1 flex flex-col justify-between">

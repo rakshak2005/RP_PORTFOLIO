@@ -8,7 +8,8 @@ const projectSchema = new mongoose.Schema({
   image: { type: String, default: "" }, // local path, cloud URL, or empty (uses iframe preview)
   githubLink: { type: String, default: "" },
   demoLink: { type: String, default: "" },
-  isHidden: { type: Boolean, default: false }
+  isHidden: { type: Boolean, default: false },
+  order: { type: Number, default: 0 }
 }, { timestamps: true });
 
 export default mongoose.model('Project', projectSchema);
