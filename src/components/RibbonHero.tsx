@@ -13,10 +13,10 @@ import './ribbon/cardTunnel.css';
 
 /* ---------- tunnel geometry ---------- */
 
-const RADIUS = 1500;
-const PER_RING = 24;
-const ROWS = 6;
-const ROW_GAP = 206;
+const RADIUS = 1150;
+const PER_RING = 22;
+const ROWS = 7;
+const ROW_GAP = 200;
 const EYE_Z = 800;
 
 type Tile = {
@@ -44,7 +44,7 @@ const TILES: Tile[] = (() => {
         theta,
         y,
         depth,
-        shade: 0.42 + t * 0.58,
+        shade: 0.64 + t * 0.36,
       });
     }
   }
