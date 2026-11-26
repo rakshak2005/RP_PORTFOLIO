@@ -44,7 +44,7 @@ const TILES: Tile[] = (() => {
         theta,
         y,
         depth,
-        shade: 0.64 + t * 0.36,
+        shade: 0.5 + t * 0.5,
       });
     }
   }
@@ -85,7 +85,7 @@ const TileCard = memo(function TileCard({
 /* ---------- walking silhouette ---------- */
 
 const Figure = () => (
-  <svg viewBox="0 0 160 344" aria-hidden="true" focusable="false">
+  <svg viewBox="0 0 160 360" aria-hidden="true" focusable="false">
     <defs>
       <linearGradient id="ct-fig" x1="0" y1="0" x2="1" y2="0">
         <stop offset="0" stopColor="#0b0908" />
@@ -94,28 +94,34 @@ const Figure = () => (
       </linearGradient>
     </defs>
     <g fill="url(#ct-fig)">
-      <ellipse cx="80" cy="44" rx="17" ry="19" />
-      <rect x="71" y="58" width="18" height="16" rx="6" />
-      <path d="M58 70C47 78 42 96 40 122L34 200L30 238L54 242L62 200L68 242L92 242L98 200L106 242L130 238L126 200L120 122C118 96 113 78 102 70Z" />
-      <path d="M62 240L78 240L76 296L80 332L62 332L58 296Z" />
-      <path d="M82 240L98 240L102 296L106 332L88 332L84 296Z" />
-      <path d="M58 328L82 328L84 338L54 338Z" />
-      <path d="M86 328L110 328L112 338L82 338Z" />
+      <ellipse cx="80" cy="36" rx="14" ry="16" />
+      <rect x="73" y="50" width="14" height="14" rx="5" />
+      <path d="M62 64C52 72 47 92 46 118L44 176L42 236L58 262L72 250L80 210L88 250L102 262L118 236L116 176L114 118C113 92 108 72 98 64Z" />
+      <path d="M64 252L78 252L76 296L80 338L64 338L60 296Z" />
+      <path d="M82 252L96 252L100 296L104 338L88 338L84 296Z" />
+      <path d="M60 334L80 334L82 344L56 344Z" />
+      <path d="M86 334L106 334L108 344L84 344Z" />
     </g>
     <path
-      d="M58 70C47 78 42 96 40 122L34 200L30 238"
+      d="M62 64C52 72 47 92 46 118L44 176L42 236"
       fill="none"
-      stroke="rgba(240,177,131,0.35)"
-      strokeWidth="1.6"
+      stroke="rgba(240,177,131,0.4)"
+      strokeWidth="1.7"
     />
-    <path d="M66 66Q80 75 94 66" fill="none" stroke="rgba(255,200,160,0.22)" strokeWidth="2" />
+    <path d="M70 60Q80 68 90 60" fill="none" stroke="rgba(255,200,160,0.22)" strokeWidth="1.8" />
   </svg>
 );
 
 /* ---------- page ---------- */
 
 const RibbonHero = () => {
-  const [active, setActive] = useState<number | null>(null);
+  const [active, setActive] = useState<number | null>(() => {
+    if (typeof window === 'undefined') return null;
+    const id = new URLSearchParams(window.location.search).get('project');
+    if (!id) return null;
+    const index = CARD_DATA.findIndex((item) => item.id === id);
+    return index >= 0 ? index : null;
+  });
   const [hot, setHot] = useState<number | null>(null);
   const [sound, setSound] = useState(false);
   const [indexOpen, setIndexOpen] = useState(false);
