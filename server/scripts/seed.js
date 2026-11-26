@@ -19,6 +19,7 @@ import Hero from '../models/Hero.js';
 import Project from '../models/Project.js';
 import Company from '../models/Company.js';
 import Skill from '../models/Skill.js';
+import canonicalProjects from '../data/projects.js';
 
 dotenv.config();
 
@@ -63,65 +64,11 @@ const seedData = async () => {
     await hero.save();
     console.log('Hero details seeded!');
 
-    // 3. Seed Projects
-    const projects = [
-      {
-        title: "GMPX",
-        category: "SaaS Tool",
-        description: "Indian IPO market intelligence platform featuring real-time Grey Market Premium (GMP) tracking, pulse analysis, allotment monitoring, and portfolio gain calculations.",
-        demoLink: "https://gmpx-track-monitor-calculate.vercel.app/",
-        technologies: ["React", "TypeScript", "Tailwind CSS", "Vite", "REST API", "Financial Analytics"],
-        githubLink: "https://github.com/rakshak2005"
-      },
-      {
-        title: "GeoBuzz",
-        category: "Mobile App",
-        description: "Automate by location. Intelligent location-based automation system triggering customized actions, alarms, sound profiles, and tasks upon entering or leaving geofenced areas.",
-        demoLink: "https://geobuzz-app.vercel.app/",
-        technologies: ["Flutter", "Dart", "Firebase", "Geolocation", "PWA"],
-        githubLink: "https://github.com/rakshak2005"
-      },
-      {
-        title: "Transit ERP",
-        category: "SaaS Tool",
-        description: "A centralized multi-warehouse supply chain and stock management ERP featuring real-time branch routing, stock transfer pipelines, and inventory reservations.",
-        demoLink: "https://transit-erp.vercel.app/",
-        technologies: ["React", "TypeScript", "Tailwind CSS", "Node.js", "Express", "MongoDB"],
-        githubLink: "https://github.com/rakshak2005"
-      },
-      {
-        title: "THINKSHIFT",
-        category: "Mobile App",
-        description: "A location-intelligent reminder system built for modern efficiency.",
-        demoLink: "https://think-shift-kappa.vercel.app/",
-        technologies: ["Flutter", "Dart", "Node.js", "MongoDB"],
-        githubLink: "https://github.com/rakshak2005"
-      },
-      {
-        title: "Campus Connect",
-        category: "AI Platform",
-        description: "Intelligent college ecosystem powered by large language models.",
-        demoLink: "https://amc-campus-connect-real-c6qg.vercel.app/",
-        technologies: ["React", "MERN Stack", "OpenAI API"],
-        githubLink: "https://github.com/rakshak2005"
-      },
-      {
-        title: "SHIKSHA SETHU",
-        category: "Mobile App",
-        description: "A location-intelligent reminder system built for modern efficiency.",
-        demoLink: "https://siksha-sethu.vercel.app/",
-        technologies: ["Flutter", "Dart", "Node.js", "MongoDB"],
-        githubLink: "https://github.com/rakshak2005"
-      },
-      {
-        title: "Shortify",
-        category: "SaaS Tool",
-        description: "Advanced URL shortening with real-time analytics and QR generation.",
-        demoLink: "https://shortify-url-shortner-ctap.vercel.app/",
-        technologies: ["Next.js", "Express", "MongoDB", "Tailwind"],
-        githubLink: "https://github.com/rakshak2005"
-      }
-    ];
+    // 3. Seed Projects (full canonical catalog)
+    const projects = canonicalProjects.map((project, index) => ({
+      ...project,
+      order: index
+    }));
     await Project.insertMany(projects);
     console.log('Projects seeded!');
 
@@ -152,7 +99,7 @@ const seedData = async () => {
         glowColor: "bg-[#8b1ff5]/5"
       }
     ];
-    await Company.insertMany(companies);
+    await Company.insertMany(companies.map((company, index) => ({ ...company, order: index })));
     console.log('Companies seeded!');
 
     // 5. Seed Skills

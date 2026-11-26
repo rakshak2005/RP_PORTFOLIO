@@ -329,11 +329,11 @@ const ProjectsPage = () => {
           </div>
 
           {/* Projects Grid */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className="flex flex-wrap justify-center gap-6">
             {filteredProjects.map((project) => (
               <div 
                 key={project._id}
-                className="group relative flex flex-col bg-gradient-to-br from-[#0c0514] to-[#050208] border border-white/5 overflow-hidden transition-all duration-500 hover:border-[#d946ef]/40 hover:shadow-[0_0_40px_rgba(217,70,239,0.1)] rounded-2xl"
+                className="group relative flex flex-col w-full sm:w-[calc(50%_-_0.75rem)] lg:w-[calc(33.333%_-_1rem)] bg-gradient-to-br from-[#0c0514] to-[#050208] border border-white/5 overflow-hidden transition-all duration-500 hover:border-[#d946ef]/40 hover:shadow-[0_0_40px_rgba(217,70,239,0.1)] rounded-2xl"
               >
                 {/* Floating premium category badge */}
                 <div className="absolute top-3 left-3 z-30 pointer-events-none px-2 py-0.5 bg-black/60 backdrop-blur-md border border-white/10 rounded-full text-[7px] font-black uppercase tracking-[0.2em] text-[#d946ef]">

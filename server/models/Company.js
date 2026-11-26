@@ -10,7 +10,8 @@ const companySchema = new mongoose.Schema({
   highlights: [{ type: String }],
   color: { type: String, default: "from-[#d946ef]/5 to-[#8b1ff5]/5" },
   borderColor: { type: String, default: "hover:border-[#d946ef]/20" },
-  glowColor: { type: String, default: "bg-[#d946ef]/5" }
+  glowColor: { type: String, default: "bg-[#d946ef]/5" },
+  order: { type: Number, default: 0 }
 }, { timestamps: true });
 
 export default mongoose.model('Company', companySchema);

@@ -1,12 +1,72 @@
 import express from 'express';
 import Project from '../models/Project.js';
+import Meta from '../models/Meta.js';
 import auth from '../middleware/auth.js';
+import canonicalProjects, { normalizeProjectTitle } from '../data/projects.js';
 
 const router = express.Router();
+
+// Bump this when new canonical projects are added to the catalog.
+const CATALOG_VERSION = 1;
+const CATALOG_KEY = 'projectCatalog';
+
+// Import any canonical projects that are missing from the database once per
+// catalog version, so the admin "Arrange Projects" screen shows the complete
+// list without resurrecting projects that were intentionally deleted.
+let syncPromise = null;
+const syncCanonicalProjects = () => {
+  if (syncPromise) return syncPromise;
+
+  syncPromise = (async () => {
+    await Meta.findOneAndUpdate(
+      { key: CATALOG_KEY },
+      { $setOnInsert: { value: { version: 0 } } },
+      { upsert: true, new: true, setDefaultsOnInsert: true }
+    );
+
+    // Atomically claim the sync so concurrent requests only run it once.
+    const claim = await Meta.findOneAndUpdate(
+      { key: CATALOG_KEY, 'value.version': { $lt: CATALOG_VERSION } },
+      { $set: { 'value.version': CATALOG_VERSION } },
+      { new: true }
+    );
+    if (!claim) return;
+
+    const existing = await Project.find().select('title order');
+    const existingTitles = new Set(existing.map((p) => normalizeProjectTitle(p.title)));
+    const missing = canonicalProjects.filter(
+      (p) => !existingTitles.has(normalizeProjectTitle(p.title))
+    );
+
+    if (missing.length === 0) return;
+
+    let nextOrder = existing.reduce(
+      (max, p) => Math.max(max, Number.isFinite(p.order) ? p.order : -1),
+      -1
+    ) + 1;
+
+    const docs = missing.map((p) => ({
+      ...p,
+      isHidden: false,
+      order: nextOrder++
+    }));
+
+    await Project.insertMany(docs, { ordered: false });
+  })()
+    .catch((error) => {
+      console.error('Error syncing canonical projects:', error);
+    })
+    .finally(() => {
+      syncPromise = null;
+    });
+
+  return syncPromise;
+};
 
 // Get all projects (manual order first, then newest)
 router.get('/', async (req, res) => {
   try {
+    await syncCanonicalProjects();
     const projects = await Project.find().sort({ order: 1, createdAt: -1 });
     res.json(projects);
   } catch (error) {

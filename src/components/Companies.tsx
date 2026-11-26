@@ -36,7 +36,7 @@ const CompanyCard = ({ exp, idx, inView, getLogoSrc, getIcon }: CompanyCardProps
     <div
       onMouseMove={handleMouseMove}
       onMouseLeave={handleMouseLeave}
-      className={`group relative rounded-[2rem] p-6 md:p-8 bg-gradient-to-br ${exp.color || 'from-[#d946ef]/5 to-[#8b1ff5]/5'} border border-white/10 ${exp.borderColor || 'hover:border-white/20'} overflow-hidden flex flex-col justify-between cursor-pointer`}
+      className={`group relative w-full md:w-[calc(50%_-_1rem)] h-full rounded-[2rem] p-6 md:p-8 bg-gradient-to-br ${exp.color || 'from-[#d946ef]/5 to-[#8b1ff5]/5'} border border-white/10 ${exp.borderColor || 'hover:border-white/20'} overflow-hidden flex flex-col justify-between cursor-pointer`}
       style={{
         transform: isHovered
           ? `perspective(1000px) rotateX(${tilt.y}deg) rotateY(${tilt.x}deg) scale(1.015)`
@@ -172,7 +172,13 @@ const Companies = () => {
       `${API_URL}/api/companies`,
       (data) => {
         if (data && data.length > 0) {
-          setExperiences(data);
+          const ordered = [...data].sort((a: any, b: any) => {
+            const orderA = typeof a.order === 'number' ? a.order : Number.MAX_SAFE_INTEGER;
+            const orderB = typeof b.order === 'number' ? b.order : Number.MAX_SAFE_INTEGER;
+            if (orderA !== orderB) return orderA - orderB;
+            return new Date(a.createdAt || 0).getTime() - new Date(b.createdAt || 0).getTime();
+          });
+          setExperiences(ordered);
         } else {
           setExperiences(staticExperiences);
         }
@@ -223,7 +229,7 @@ const Companies = () => {
         </div>
 
         {/* Experience Cards Grid with 3D perspective wrapper */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8" style={{ perspective: '1000px' }}>
+        <div className="flex flex-wrap justify-center gap-6 md:gap-8" style={{ perspective: '1000px' }}>
           {experiences.map((exp, idx) => (
             <CompanyCard
               key={idx}

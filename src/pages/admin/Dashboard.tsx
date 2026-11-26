@@ -25,7 +25,7 @@ const Dashboard = () => {
     _id: '', title: '', category: '', description: '', technologies: '', githubLink: '', demoLink: '', image: '', isHidden: false
   });
 
-  const [companies, setCompanies] = useState([]);
+  const [companies, setCompanies] = useState<any[]>([]);
   const [companyForm, setCompanyForm] = useState({
     _id: '', company: '', logo: '', badge: '', role: '', timeline: '', description: '', highlights: '',
     color: 'from-[#d946ef]/5 to-[#8b1ff5]/5', borderColor: 'hover:border-[#d946ef]/40', glowColor: 'bg-[#d946ef]/5'
@@ -299,6 +299,42 @@ const Dashboard = () => {
     }
   };
 
+  const moveCompany = async (index: number, direction: -1 | 1) => {
+    const ordered = [...companies].sort((a: any, b: any) => (a.order ?? 0) - (b.order ?? 0));
+    const target = index + direction;
+    if (target < 0 || target >= ordered.length) return;
+
+    [ordered[index], ordered[target]] = [ordered[target], ordered[index]];
+    const reordered = ordered.map((comp, i) => ({ ...comp, order: i }));
+
+    // Optimistic update so the UI reacts immediately
+    setCompanies(reordered);
+
+    try {
+      const res = await fetch(`${API_URL}/api/companies/reorder`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify({
+          order: reordered.map((comp) => ({ id: comp._id, order: comp.order }))
+        })
+      });
+
+      if (!res.ok) {
+        const data = await res.json().catch(() => ({}));
+        throw new Error(data.message || 'Failed to save company order');
+      }
+
+      showMsg('Company order saved');
+      fetchData(token);
+    } catch (err: any) {
+      showMsg(err.message, 'error');
+      fetchData(token);
+    }
+  };
+
   // 4. Skills Handlers
   const handleSkillSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -397,6 +433,13 @@ const Dashboard = () => {
     }
   };
 
+  // Ids of the visible projects that occupy the 6 home-page slots
+  const homeProjectIds = [...projects]
+    .filter((p: any) => !p.isHidden)
+    .sort((a: any, b: any) => (a.order ?? 0) - (b.order ?? 0))
+    .slice(0, 6)
+    .map((p: any) => p._id);
+
   return (
     <div className="min-h-screen bg-[#050208] text-white flex flex-col">
       {/* Header bar */}
@@ -433,6 +476,7 @@ const Dashboard = () => {
             { id: 'projects', label: 'Projects Manager', icon: <Code size={18} /> },
             { id: 'order', label: 'Arrange Projects', icon: <ArrowUpDown size={18} /> },
             { id: 'companies', label: 'Companies Showcase', icon: <Briefcase size={18} /> },
+            { id: 'company-order', label: 'Arrange Companies', icon: <ArrowUpDown size={18} /> },
             { id: 'skills', label: 'Skills Grid', icon: <Award size={18} /> },
             { id: 'password', label: 'Account Settings', icon: <Settings size={18} /> }
           ].map(tab => (
@@ -786,8 +830,10 @@ const Dashboard = () => {
                 <ArrowUpDown className="text-[#d946ef]" /> Arrange Project Order
               </h2>
               <p className="text-xs text-slate-400 mb-6 leading-relaxed">
-                Use the arrows to control the order projects appear on the home page and the
-                all-projects archive. Changes are saved automatically.
+                All projects are listed here. Use the arrows to control their order. The first
+                <span className="text-[#d946ef] font-semibold"> 6 projects </span>
+                appear on the home page, while the full ordered list appears in the all-projects archive.
+                Changes are saved automatically.
               </p>
 
               <div className="space-y-3">
@@ -817,6 +863,11 @@ const Dashboard = () => {
                       <div className="flex-1 min-w-0">
                         <h4 className="font-bold text-white text-sm truncate flex items-center gap-2">
                           {proj.title}
+                          {homeProjectIds.includes(proj._id) && (
+                            <span className="px-2 py-0.5 rounded text-[8px] font-extrabold bg-[#d946ef]/10 text-[#d946ef] border border-[#d946ef]/20 uppercase tracking-widest">
+                              Home
+                            </span>
+                          )}
                           {proj.isHidden && (
                             <span className="px-2 py-0.5 rounded text-[8px] font-extrabold bg-red-500/10 text-red-400 border border-red-500/20 uppercase tracking-widest">
                               Hidden
@@ -852,6 +903,79 @@ const Dashboard = () => {
                   ))}
                 {projects.length === 0 && (
                   <p className="text-slate-500 text-xs italic">No projects found. Add one first.</p>
+                )}
+              </div>
+            </div>
+          )}
+
+          {/* 3b. COMPANY ORDER TAB */}
+          {activeTab === 'company-order' && (
+            <div className="bg-white/[0.02] border border-white/5 rounded-3xl p-6 md:p-8 animate-fade-in">
+              <h2 className="text-xl font-bold uppercase mb-2 flex items-center gap-2 text-white">
+                <ArrowUpDown className="text-[#d946ef]" /> Arrange Company Order
+              </h2>
+              <p className="text-xs text-slate-400 mb-6 leading-relaxed">
+                Use the arrows to control the order companies appear in the "Associated Companies"
+                section on the home page. Changes are saved automatically.
+              </p>
+
+              <div className="space-y-3">
+                {[...companies]
+                  .sort((a: any, b: any) => (a.order ?? 0) - (b.order ?? 0))
+                  .map((comp: any, index: number, list: any[]) => (
+                    <div
+                      key={comp._id}
+                      className="flex items-center gap-3 p-3 rounded-xl border border-white/5 bg-black/20 hover:border-white/10 transition-colors"
+                    >
+                      <span className="w-7 shrink-0 text-center font-mono text-xs text-slate-500">
+                        {index + 1}
+                      </span>
+
+                      <div className="w-16 h-12 shrink-0 rounded-lg overflow-hidden border border-white/5 bg-black/40 flex items-center justify-center p-1.5">
+                        {comp.logo ? (
+                          <img
+                            src={comp.logo.startsWith('/uploads') ? `${API_URL}${comp.logo}` : comp.logo}
+                            alt={comp.company}
+                            className="object-contain w-full h-full"
+                          />
+                        ) : (
+                          <Briefcase size={14} className="text-slate-600" />
+                        )}
+                      </div>
+
+                      <div className="flex-1 min-w-0">
+                        <h4 className="font-bold text-white text-sm truncate">
+                          {comp.company}
+                        </h4>
+                        <span className="text-[10px] text-slate-500 uppercase tracking-widest font-mono">
+                          {comp.role}
+                        </span>
+                      </div>
+
+                      <div className="flex gap-1.5 shrink-0">
+                        <button
+                          type="button"
+                          onClick={() => moveCompany(index, -1)}
+                          disabled={index === 0}
+                          title="Move up"
+                          className="p-2 rounded-lg border border-white/5 bg-white/5 hover:bg-[#d946ef]/20 hover:text-[#d946ef] hover:border-[#d946ef]/20 transition-all disabled:opacity-30 disabled:cursor-not-allowed disabled:hover:bg-white/5 disabled:hover:text-inherit"
+                        >
+                          <ArrowUp size={14} />
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => moveCompany(index, 1)}
+                          disabled={index === list.length - 1}
+                          title="Move down"
+                          className="p-2 rounded-lg border border-white/5 bg-white/5 hover:bg-[#d946ef]/20 hover:text-[#d946ef] hover:border-[#d946ef]/20 transition-all disabled:opacity-30 disabled:cursor-not-allowed disabled:hover:bg-white/5 disabled:hover:text-inherit"
+                        >
+                          <ArrowDown size={14} />
+                        </button>
+                      </div>
+                    </div>
+                  ))}
+                {companies.length === 0 && (
+                  <p className="text-slate-500 text-xs italic">No companies found. Add one first.</p>
                 )}
               </div>
             </div>
