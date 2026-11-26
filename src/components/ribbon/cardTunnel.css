@@ -316,9 +316,9 @@ body.ct-lock {
 
 .ct-person {
   position: absolute;
-  left: 56%;
-  bottom: 44%;
-  height: 9.5vh;
+  left: 58%;
+  bottom: 36%;
+  height: 12vh;
   z-index: 8;
   pointer-events: none;
   transform: translateX(-50%);
@@ -352,10 +352,10 @@ body.ct-lock {
 
 .ct-person-shadow {
   position: absolute;
-  left: 56%;
-  bottom: 43.4%;
-  width: 7vw;
-  height: 12px;
+  left: 58%;
+  bottom: 35.4%;
+  width: 9vw;
+  height: 18px;
   z-index: 7;
   pointer-events: none;
   transform: translateX(-50%);
@@ -489,6 +489,20 @@ body.ct-lock {
   pointer-events: auto;
 }
 
+.ct-index::before {
+  content: "";
+  position: absolute;
+  z-index: -1;
+  inset: -46px -3vw -22px -46px;
+  pointer-events: none;
+  background: radial-gradient(
+    ellipse 76% 88% at 68% 48%,
+    rgba(5, 4, 4, 0.85) 0%,
+    rgba(5, 4, 4, 0.45) 52%,
+    rgba(5, 4, 4, 0) 82%
+  );
+}
+
 .ct-index-item {
   display: flex;
   align-items: center;
@@ -548,6 +562,20 @@ body.ct-lock {
   flex-direction: column;
   align-items: flex-end;
   text-align: right;
+}
+
+.ct-caption::before {
+  content: "";
+  position: absolute;
+  z-index: -1;
+  inset: -50px -6vw -9vh -24vw;
+  pointer-events: none;
+  background: radial-gradient(
+    ellipse 62% 78% at 70% 58%,
+    rgba(5, 4, 4, 0.85) 0%,
+    rgba(5, 4, 4, 0.55) 42%,
+    rgba(5, 4, 4, 0) 78%
+  );
 }
 
 .ct-caption-inner {
@@ -739,6 +767,20 @@ body.ct-lock {
   .ct-topright {
     right: 6vw;
     top: 4.2vh;
+  }
+
+  .ct-topright .ct-sound {
+    display: inline-flex;
+  }
+
+  .ct-caption::before {
+    inset: -28px -8vw -9vh -8vw;
+    background: linear-gradient(
+      180deg,
+      rgba(5, 4, 4, 0) 0%,
+      rgba(5, 4, 4, 0.76) 34%,
+      rgba(5, 4, 4, 0.9) 100%
+    );
   }
 
   .ct-caption {
