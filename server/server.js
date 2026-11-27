@@ -21,6 +21,7 @@ import heroRoutes from './routes/hero.js';
 import projectRoutes from './routes/projects.js';
 import companyRoutes from './routes/companies.js';
 import skillRoutes from './routes/skills.js';
+import achievementRoutes from './routes/achievements.js';
 import uploadRoutes from './routes/upload.js';
 import fileRoutes from './routes/files.js';
 
@@ -58,6 +59,7 @@ app.use('/api/hero', heroRoutes);
 app.use('/api/projects', projectRoutes);
 app.use('/api/companies', companyRoutes);
 app.use('/api/skills', skillRoutes);
+app.use('/api/achievements', achievementRoutes);
 app.use('/api/upload', uploadRoutes);
 
 // Base route

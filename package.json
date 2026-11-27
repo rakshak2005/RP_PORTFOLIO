@@ -7,6 +7,7 @@
     "dev": "vite",
     "server": "node server/server.js",
     "migrate:uploads": "node server/scripts/migrate-uploads.js",
+    "seed:achievements": "node server/scripts/seed-achievements.js",
     "dev:all": "concurrently \"npm run dev\" \"npm run server\"",
     "build": "node ./node_modules/vite/bin/vite.js build",
     "build:dev": "node ./node_modules/vite/bin/vite.js build --mode development",

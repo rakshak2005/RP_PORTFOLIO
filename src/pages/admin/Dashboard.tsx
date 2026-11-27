@@ -4,8 +4,24 @@ import { API_URL } from '../../config';
 import {
   Sparkles, LogOut, FileText, Briefcase, Code, Award,
   Settings, Save, Plus, Trash2, Edit, Upload, Check, AlertCircle, RefreshCw,
-  ArrowUp, ArrowDown, ArrowUpDown
+  ArrowUp, ArrowDown, ArrowUpDown, Trophy
 } from 'lucide-react';
+
+const EMPTY_ACHIEVEMENT_FORM = {
+  _id: '',
+  type: 'hackathon',
+  title: '',
+  project: '',
+  achievement: 'Winner',
+  year: '',
+  organization: '',
+  description: '',
+  category: 'Certifications',
+  accent: 'gold',
+  image: '',
+  certificate: '',
+  isHidden: false
+};
 
 const Dashboard = () => {
   const navigate = useNavigate();
@@ -36,6 +52,9 @@ const Dashboard = () => {
     _id: '', title: '', icon: 'Layers', side: 'left', skillsList: ''
   });
 
+  const [achievements, setAchievements] = useState<any[]>([]);
+  const [achievementForm, setAchievementForm] = useState({ ...EMPTY_ACHIEVEMENT_FORM });
+
   const [passwordForm, setPasswordForm] = useState({ currentPassword: '', newPassword: '', confirmPassword: '' });
 
   useEffect(() => {
@@ -52,6 +71,8 @@ const Dashboard = () => {
     setMsg({ text, type });
     setTimeout(() => setMsg({ text: '', type: '' }), 4000);
   };
+
+  const resolveImage = (src?: string) => (src && src.startsWith('/uploads') ? `${API_URL}${src}` : src || '');
 
   const fetchData = async (authToken: string) => {
     try {
@@ -74,6 +95,17 @@ const Dashboard = () => {
       const resSkills = await fetch(`${API_URL}/api/skills`);
       if (resSkills.ok) setSkills(await resSkills.json());
 
+      // Fetch Achievements
+      const resAchievements = await fetch(`${API_URL}/api/achievements`);
+      if (resAchievements.ok) {
+        const dAchievements = await resAchievements.json();
+        setAchievements(
+          [...(Array.isArray(dAchievements) ? dAchievements : [])].sort(
+            (a: any, b: any) => (a.order ?? 0) - (b.order ?? 0)
+          )
+        );
+      }
+
     } catch (err) {
       showMsg('Failed to load portfolio database', 'error');
     }
@@ -86,7 +118,10 @@ const Dashboard = () => {
   };
 
   // Image and Document upload helper
-  const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>, type: 'company' | 'project' | 'resume') => {
+  const handleFileUpload = async (
+    e: React.ChangeEvent<HTMLInputElement>,
+    type: 'company' | 'project' | 'resume' | 'achievement' | 'achievement-certificate'
+  ) => {
     const file = e.target.files?.[0];
     if (!file) return;
 
@@ -112,6 +147,10 @@ const Dashboard = () => {
         setProjectForm(prev => ({ ...prev, image: data.url }));
       } else if (type === 'resume') {
         setHeroData(prev => ({ ...prev, resumeLink: data.url }));
+      } else if (type === 'achievement') {
+        setAchievementForm(prev => ({ ...prev, image: data.url }));
+      } else if (type === 'achievement-certificate') {
+        setAchievementForm(prev => ({ ...prev, certificate: data.url }));
       }
       showMsg('File uploaded successfully!');
     } catch (err: any) {
@@ -399,7 +438,107 @@ const Dashboard = () => {
     }
   };
 
-  // 5. Change Password Handler
+  // 5. Achievements Handlers
+  const handleAchievementSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setLoading(true);
+
+    const isEdit = !!achievementForm._id;
+    const body: any = { ...achievementForm };
+
+    if (body.type === 'certificate') {
+      body.project = '';
+      body.achievement = '';
+      body.description = '';
+      body.accent = 'gold';
+      body.certificate = '';
+      if (!body.category || body.category === 'Hackathons') body.category = 'Certifications';
+    } else {
+      body.category = 'Hackathons';
+    }
+
+    const url = isEdit
+      ? `${API_URL}/api/achievements/${achievementForm._id}`
+      : `${API_URL}/api/achievements`;
+    const method = isEdit ? 'PUT' : 'POST';
+
+    try {
+      const res = await fetch(url, {
+        method,
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify(body)
+      });
+
+      if (res.ok) {
+        showMsg(isEdit ? 'Achievement updated!' : 'Achievement added!');
+        setAchievementForm({ ...EMPTY_ACHIEVEMENT_FORM });
+        fetchData(token);
+      } else {
+        const errorData = await res.json().catch(() => ({}));
+        throw new Error(errorData.message || 'Achievement save failed');
+      }
+    } catch (err: any) {
+      showMsg(err.message, 'error');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const deleteAchievement = async (id: string) => {
+    if (!window.confirm('Delete this achievement? This cannot be undone.')) return;
+    try {
+      const res = await fetch(`${API_URL}/api/achievements/${id}`, {
+        method: 'DELETE',
+        headers: { 'Authorization': `Bearer ${token}` }
+      });
+      if (res.ok) {
+        showMsg('Achievement deleted');
+        fetchData(token);
+      }
+    } catch (err: any) {
+      showMsg(err.message, 'error');
+    }
+  };
+
+  const moveAchievement = async (index: number, direction: -1 | 1) => {
+    const ordered = [...achievements].sort((a: any, b: any) => (a.order ?? 0) - (b.order ?? 0));
+    const target = index + direction;
+    if (target < 0 || target >= ordered.length) return;
+
+    [ordered[index], ordered[target]] = [ordered[target], ordered[index]];
+    const reordered = ordered.map((item, i) => ({ ...item, order: i }));
+
+    setAchievements(reordered);
+
+    try {
+      const res = await fetch(`${API_URL}/api/achievements/reorder`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify({
+          order: reordered.map((item) => ({ id: item._id, order: item.order }))
+        })
+      });
+
+      if (!res.ok) {
+        const data = await res.json().catch(() => ({}));
+        throw new Error(data.message || 'Failed to save achievement order');
+      }
+
+      showMsg('Achievement order saved');
+      fetchData(token);
+    } catch (err: any) {
+      showMsg(err.message, 'error');
+      fetchData(token);
+    }
+  };
+
+  // 6. Change Password Handler
   const handlePasswordSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (passwordForm.newPassword !== passwordForm.confirmPassword) {
@@ -478,6 +617,7 @@ const Dashboard = () => {
             { id: 'companies', label: 'Companies Showcase', icon: <Briefcase size={18} /> },
             { id: 'company-order', label: 'Arrange Companies', icon: <ArrowUpDown size={18} /> },
             { id: 'skills', label: 'Skills Grid', icon: <Award size={18} /> },
+            { id: 'achievements', label: 'Achievements', icon: <Trophy size={18} /> },
             { id: 'password', label: 'Account Settings', icon: <Settings size={18} /> }
           ].map(tab => (
             <button
@@ -1280,7 +1420,388 @@ const Dashboard = () => {
             </div>
           )}
 
-          {/* 5. PASSWORD TAB */}
+          {/* 5. ACHIEVEMENTS TAB */}
+          {activeTab === 'achievements' && (
+            <div className="space-y-6 animate-fade-in">
+              {/* Form */}
+              <div className="bg-white/[0.02] border border-white/5 rounded-3xl p-6 md:p-8">
+                <h2 className="text-xl font-bold uppercase mb-2 flex items-center gap-2 text-white">
+                  <Trophy className="text-[#e8c97a]" /> {achievementForm._id ? 'Edit Achievement' : 'Add New Achievement'}
+                </h2>
+                <p className="text-xs text-slate-400 mb-6 leading-relaxed">
+                  Hackathon entries appear as the two large featured cards at the top of the section.
+                  Certificates fill the "Credentials &amp; Milestones" gallery.
+                </p>
+
+                <form onSubmit={handleAchievementSubmit} className="space-y-5">
+                  {/* Type selector */}
+                  <div className="space-y-2">
+                    <label className="text-[10px] font-mono uppercase tracking-widest text-slate-400">Entry Type</label>
+                    <div className="grid grid-cols-2 gap-3">
+                      {[
+                        { value: 'hackathon', label: 'Hackathon Win', hint: 'Featured card' },
+                        { value: 'certificate', label: 'Certificate', hint: 'Gallery item' },
+                      ].map(option => (
+                        <button
+                          key={option.value}
+                          type="button"
+                          onClick={() => setAchievementForm({
+                            ...achievementForm,
+                            type: option.value,
+                            category: option.value === 'hackathon' ? 'Hackathons' : 'Certifications'
+                          })}
+                          className={`px-4 py-3 rounded-xl border text-left transition-all ${
+                            achievementForm.type === option.value
+                              ? 'border-[#e8c97a]/50 bg-[#e8c97a]/10'
+                              : 'border-white/5 bg-black/40 hover:border-white/15'
+                          }`}
+                        >
+                          <span className="block text-sm font-bold text-white">{option.label}</span>
+                          <span className="block text-[10px] uppercase tracking-widest text-slate-500 font-mono mt-0.5">{option.hint}</span>
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div className="space-y-2">
+                      <label className="text-[10px] font-mono uppercase tracking-widest text-slate-400">
+                        {achievementForm.type === 'hackathon' ? 'Hackathon Name' : 'Certificate Title'}
+                      </label>
+                      <input
+                        type="text"
+                        required
+                        value={achievementForm.title}
+                        onChange={e => setAchievementForm({ ...achievementForm, title: e.target.value })}
+                        placeholder={achievementForm.type === 'hackathon' ? 'e.g. Smart India Hackathon' : 'e.g. Front End Development'}
+                        className="w-full px-4 py-3 rounded-xl border border-white/5 bg-black/40 text-sm focus:outline-none focus:border-[#e8c97a]/30"
+                      />
+                    </div>
+
+                    <div className="space-y-2">
+                      <label className="text-[10px] font-mono uppercase tracking-widest text-slate-400">Year</label>
+                      <input
+                        type="text"
+                        value={achievementForm.year}
+                        onChange={e => setAchievementForm({ ...achievementForm, year: e.target.value })}
+                        placeholder="e.g. 2025"
+                        className="w-full px-4 py-3 rounded-xl border border-white/5 bg-black/40 text-sm focus:outline-none focus:border-[#e8c97a]/30"
+                      />
+                    </div>
+                  </div>
+
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div className="space-y-2">
+                      <label className="text-[10px] font-mono uppercase tracking-widest text-slate-400">
+                        {achievementForm.type === 'hackathon' ? 'Project Name' : 'Issuer / Organization'}
+                      </label>
+                      <input
+                        type="text"
+                        value={achievementForm.type === 'hackathon' ? achievementForm.project : achievementForm.organization}
+                        onChange={e => setAchievementForm(
+                          achievementForm.type === 'hackathon'
+                            ? { ...achievementForm, project: e.target.value }
+                            : { ...achievementForm, organization: e.target.value }
+                        )}
+                        placeholder={achievementForm.type === 'hackathon' ? 'e.g. Project Name' : 'e.g. Codsoft, Microsoft'}
+                        className="w-full px-4 py-3 rounded-xl border border-white/5 bg-black/40 text-sm focus:outline-none focus:border-[#e8c97a]/30"
+                      />
+                    </div>
+
+                    {achievementForm.type === 'hackathon' ? (
+                      <div className="space-y-2">
+                        <label className="text-[10px] font-mono uppercase tracking-widest text-slate-400">Position / Award</label>
+                        <input
+                          type="text"
+                          value={achievementForm.achievement}
+                          onChange={e => setAchievementForm({ ...achievementForm, achievement: e.target.value })}
+                          placeholder="e.g. Winner, 1st Place, Runner-up"
+                          className="w-full px-4 py-3 rounded-xl border border-white/5 bg-black/40 text-sm focus:outline-none focus:border-[#e8c97a]/30"
+                        />
+                      </div>
+                    ) : (
+                      <div className="space-y-2">
+                        <label className="text-[10px] font-mono uppercase tracking-widest text-slate-400">Gallery Category</label>
+                        <select
+                          value={achievementForm.category}
+                          onChange={e => setAchievementForm({ ...achievementForm, category: e.target.value })}
+                          className="w-full px-4 py-3 rounded-xl border border-white/5 bg-black/40 text-sm focus:outline-none focus:border-[#e8c97a]/30 text-white"
+                        >
+                          <option value="Technical" className="bg-[#050208]">Technical</option>
+                          <option value="Certifications" className="bg-[#050208]">Certifications</option>
+                          <option value="Workshops" className="bg-[#050208]">Workshops</option>
+                          <option value="Other" className="bg-[#050208]">Other</option>
+                        </select>
+                      </div>
+                    )}
+                  </div>
+
+                  {achievementForm.type === 'hackathon' && (
+                    <>
+                      <div className="space-y-2">
+                        <label className="text-[10px] font-mono uppercase tracking-widest text-slate-400">Organizing Body</label>
+                        <input
+                          type="text"
+                          value={achievementForm.organization}
+                          onChange={e => setAchievementForm({ ...achievementForm, organization: e.target.value })}
+                          placeholder="e.g. Organizing Body"
+                          className="w-full px-4 py-3 rounded-xl border border-white/5 bg-black/40 text-sm focus:outline-none focus:border-[#e8c97a]/30"
+                        />
+                      </div>
+
+                      <div className="space-y-2">
+                        <label className="text-[10px] font-mono uppercase tracking-widest text-slate-400">Description</label>
+                        <textarea
+                          rows={3}
+                          value={achievementForm.description}
+                          onChange={e => setAchievementForm({ ...achievementForm, description: e.target.value })}
+                          placeholder="The challenge, your role, the build, and what the judges recognised."
+                          className="w-full px-4 py-3 rounded-xl border border-white/5 bg-black/40 text-sm focus:outline-none focus:border-[#e8c97a]/30"
+                        />
+                      </div>
+
+                      <div className="space-y-2">
+                        <label className="text-[10px] font-mono uppercase tracking-widest text-slate-400">Card Accent</label>
+                        <div className="grid grid-cols-2 gap-3">
+                          {[
+                            { value: 'gold', label: 'Gold' },
+                            { value: 'silver', label: 'Silver' },
+                          ].map(option => (
+                            <button
+                              key={option.value}
+                              type="button"
+                              onClick={() => setAchievementForm({ ...achievementForm, accent: option.value })}
+                              className={`px-4 py-3 rounded-xl border text-xs font-bold uppercase tracking-wider transition-all ${
+                                achievementForm.accent === option.value
+                                  ? 'border-[#e8c97a]/50 bg-[#e8c97a]/10 text-white'
+                                  : 'border-white/5 bg-black/40 text-slate-400 hover:border-white/15'
+                              }`}
+                            >
+                              {option.label}
+                            </button>
+                          ))}
+                        </div>
+                      </div>
+
+                      {/* Cover image upload */}
+                      <div className="space-y-2">
+                        <label className="text-[10px] font-mono uppercase tracking-widest text-slate-400">Cover Image</label>
+                        <div className="flex items-center gap-4">
+                          <input
+                            type="text"
+                            value={achievementForm.image}
+                            onChange={e => setAchievementForm({ ...achievementForm, image: e.target.value })}
+                            placeholder="Image URL or /uploads path (or upload below)"
+                            className="flex-1 px-4 py-3 rounded-xl border border-white/5 bg-black/40 text-sm focus:outline-none focus:border-[#e8c97a]/30"
+                          />
+                          <label className="px-4 py-3 rounded-xl border border-white/10 bg-white/5 hover:bg-white/10 text-xs font-bold uppercase tracking-wider flex items-center gap-1.5 cursor-pointer transition-colors whitespace-nowrap">
+                            <Upload size={14} /> Upload
+                            <input
+                              type="file"
+                              accept="image/*"
+                              className="hidden"
+                              onChange={e => handleFileUpload(e, 'achievement')}
+                            />
+                          </label>
+                        </div>
+                        {achievementForm.image && (
+                          <div className="mt-2 w-28 h-20 rounded-xl border border-white/5 overflow-hidden bg-black/40">
+                            <img src={resolveImage(achievementForm.image)} className="object-cover w-full h-full" alt="Cover preview" />
+                          </div>
+                        )}
+                      </div>
+
+                      {/* Certificate image upload */}
+                      <div className="space-y-2">
+                        <label className="text-[10px] font-mono uppercase tracking-widest text-slate-400">Certificate Image</label>
+                        <div className="flex items-center gap-4">
+                          <input
+                            type="text"
+                            value={achievementForm.certificate}
+                            onChange={e => setAchievementForm({ ...achievementForm, certificate: e.target.value })}
+                            placeholder="Certificate image URL or /uploads path"
+                            className="flex-1 px-4 py-3 rounded-xl border border-white/5 bg-black/40 text-sm focus:outline-none focus:border-[#e8c97a]/30"
+                          />
+                          <label className="px-4 py-3 rounded-xl border border-white/10 bg-white/5 hover:bg-white/10 text-xs font-bold uppercase tracking-wider flex items-center gap-1.5 cursor-pointer transition-colors whitespace-nowrap">
+                            <Upload size={14} /> Upload
+                            <input
+                              type="file"
+                              accept="image/*"
+                              className="hidden"
+                              onChange={e => handleFileUpload(e, 'achievement-certificate')}
+                            />
+                          </label>
+                        </div>
+                        {achievementForm.certificate && (
+                          <div className="mt-2 w-28 h-20 rounded-xl border border-white/5 overflow-hidden bg-black/40">
+                            <img src={resolveImage(achievementForm.certificate)} className="object-cover w-full h-full" alt="Certificate preview" />
+                          </div>
+                        )}
+                      </div>
+                    </>
+                  )}
+
+                  {achievementForm.type === 'certificate' && (
+                    <div className="space-y-2">
+                      <label className="text-[10px] font-mono uppercase tracking-widest text-slate-400">Certificate Image</label>
+                      <div className="flex items-center gap-4">
+                        <input
+                          type="text"
+                          value={achievementForm.image}
+                          onChange={e => setAchievementForm({ ...achievementForm, image: e.target.value })}
+                          placeholder="Certificate image URL or /uploads path (or upload below)"
+                          className="flex-1 px-4 py-3 rounded-xl border border-white/5 bg-black/40 text-sm focus:outline-none focus:border-[#e8c97a]/30"
+                        />
+                        <label className="px-4 py-3 rounded-xl border border-white/10 bg-white/5 hover:bg-white/10 text-xs font-bold uppercase tracking-wider flex items-center gap-1.5 cursor-pointer transition-colors whitespace-nowrap">
+                          <Upload size={14} /> Upload
+                          <input
+                            type="file"
+                            accept="image/*"
+                            className="hidden"
+                            onChange={e => handleFileUpload(e, 'achievement')}
+                          />
+                        </label>
+                      </div>
+                      {achievementForm.image && (
+                        <div className="mt-2 w-28 h-20 rounded-xl border border-white/5 overflow-hidden bg-black/40">
+                          <img src={resolveImage(achievementForm.image)} className="object-cover w-full h-full" alt="Certificate preview" />
+                        </div>
+                      )}
+                    </div>
+                  )}
+
+                  <label className="flex items-center gap-3 cursor-pointer select-none">
+                    <input
+                      type="checkbox"
+                      checked={achievementForm.isHidden}
+                      onChange={e => setAchievementForm({ ...achievementForm, isHidden: e.target.checked })}
+                      className="w-4 h-4 accent-[#e8c97a]"
+                    />
+                    <span className="text-xs text-slate-300">Hide this entry from the public site</span>
+                  </label>
+
+                  <div className="flex gap-3 pt-2">
+                    <button
+                      type="submit"
+                      disabled={loading}
+                      className="px-6 py-3 bg-white text-black font-black uppercase text-xs tracking-wider rounded-xl hover:bg-[#e8c97a] transition-colors flex items-center gap-2"
+                    >
+                      {achievementForm._id ? <Save size={14} /> : <Plus size={14} />}
+                      {loading ? 'Saving...' : achievementForm._id ? 'Update Achievement' : 'Add Achievement'}
+                    </button>
+                    {achievementForm._id && (
+                      <button
+                        type="button"
+                        onClick={() => setAchievementForm({ ...EMPTY_ACHIEVEMENT_FORM })}
+                        className="px-6 py-3 rounded-xl border border-white/5 bg-white/5 hover:bg-white/10 text-xs font-bold uppercase tracking-wider transition-colors"
+                      >
+                        Cancel Edit
+                      </button>
+                    )}
+                  </div>
+                </form>
+              </div>
+
+              {/* List */}
+              <div className="bg-white/[0.02] border border-white/5 rounded-3xl p-6 md:p-8">
+                <h3 className="text-lg font-bold uppercase mb-2">Current Achievements</h3>
+                <p className="text-xs text-slate-400 mb-6">Use the arrows to control the order they appear on the site.</p>
+                <div className="space-y-4">
+                  {achievements.length === 0 && (
+                    <p className="text-slate-500 text-xs italic">No achievements yet. Add one above.</p>
+                  )}
+                  {achievements.map((item: any, index: number) => {
+                    const thumb = item.type === 'hackathon' ? item.image : item.image;
+                    return (
+                      <div key={item._id} className="flex flex-wrap items-center gap-4 p-4 rounded-2xl border border-white/5 bg-black/20 hover:border-white/10 transition-colors">
+                        <div className="w-16 h-12 rounded-lg border border-white/5 bg-black/40 overflow-hidden flex items-center justify-center shrink-0">
+                          {thumb ? (
+                            <img src={resolveImage(thumb)} className="object-cover w-full h-full" alt="" />
+                          ) : (
+                            <Trophy size={16} className="text-slate-600" />
+                          )}
+                        </div>
+                        <div className="flex-1 min-w-[160px]">
+                          <div className="flex items-center gap-2 flex-wrap">
+                            <h4 className="font-bold text-white text-sm">{item.title || 'Untitled'}</h4>
+                            <span className={`px-2 py-0.5 rounded-full text-[9px] font-mono uppercase tracking-wider border ${
+                              item.type === 'hackathon'
+                                ? 'border-[#e8c97a]/30 text-[#e8c97a] bg-[#e8c97a]/5'
+                                : 'border-white/10 text-slate-400 bg-white/5'
+                            }`}>
+                              {item.type === 'hackathon' ? 'Hackathon' : item.category || 'Certificate'}
+                            </span>
+                            {item.isHidden && (
+                              <span className="px-2 py-0.5 rounded-full text-[9px] font-mono uppercase tracking-wider border border-red-500/30 text-red-400 bg-red-500/5">
+                                Hidden
+                              </span>
+                            )}
+                          </div>
+                          <p className="text-[10px] text-slate-500 mt-1 uppercase tracking-widest font-mono">
+                            {[item.organization, item.year, item.type === 'hackathon' ? item.achievement : '']
+                              .filter(Boolean)
+                              .join(' · ')}
+                          </p>
+                        </div>
+                        <div className="flex gap-2 ml-auto">
+                          <button
+                            type="button"
+                            onClick={() => moveAchievement(index, -1)}
+                            disabled={index === 0}
+                            className="p-2.5 rounded-lg border border-white/5 bg-white/5 hover:bg-white/10 disabled:opacity-30 disabled:pointer-events-none transition-all"
+                            title="Move up"
+                          >
+                            <ArrowUp size={14} />
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => moveAchievement(index, 1)}
+                            disabled={index === achievements.length - 1}
+                            className="p-2.5 rounded-lg border border-white/5 bg-white/5 hover:bg-white/10 disabled:opacity-30 disabled:pointer-events-none transition-all"
+                            title="Move down"
+                          >
+                            <ArrowDown size={14} />
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => setAchievementForm({
+                              _id: item._id,
+                              type: item.type || 'certificate',
+                              title: item.title || '',
+                              project: item.project || '',
+                              achievement: item.achievement || '',
+                              year: item.year || '',
+                              organization: item.organization || '',
+                              description: item.description || '',
+                              category: item.category || 'Certifications',
+                              accent: item.accent || 'gold',
+                              image: item.image || '',
+                              certificate: item.certificate || '',
+                              isHidden: !!item.isHidden
+                            })}
+                            className="p-2.5 rounded-lg border border-white/5 bg-white/5 hover:bg-[#d946ef]/20 hover:text-[#d946ef] hover:border-[#d946ef]/20 transition-all"
+                            title="Edit"
+                          >
+                            <Edit size={14} />
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => deleteAchievement(item._id)}
+                            className="p-2.5 rounded-lg border border-white/5 bg-white/5 hover:bg-red-500/20 hover:text-red-400 hover:border-red-500/20 transition-all"
+                            title="Delete"
+                          >
+                            <Trash2 size={14} />
+                          </button>
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* 6. PASSWORD TAB */}
           {activeTab === 'password' && (
             <div className="bg-white/[0.02] border border-white/5 rounded-3xl p-6 md:p-8 animate-fade-in">
               <h2 className="text-xl font-bold uppercase mb-6 flex items-center gap-2">
