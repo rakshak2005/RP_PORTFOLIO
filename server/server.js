@@ -22,6 +22,7 @@ import projectRoutes from './routes/projects.js';
 import companyRoutes from './routes/companies.js';
 import skillRoutes from './routes/skills.js';
 import uploadRoutes from './routes/upload.js';
+import fileRoutes from './routes/files.js';
 
 dotenv.config();
 
@@ -38,8 +39,9 @@ if (!fs.existsSync(uploadDir)) {
 app.use(cors());
 app.use(express.json());
 
-// Serve uploads statically
+// Serve uploads statically, then fall back to MongoDB-backed uploads
 app.use('/uploads', express.static(uploadDir));
+app.use('/uploads', fileRoutes);
 
 // Connect to MongoDB
 const MONGO_URI = process.env.MONGO_URI || 'mongodb://localhost:27017/portfolio';

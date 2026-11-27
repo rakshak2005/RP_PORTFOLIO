@@ -13,6 +13,39 @@ interface CompanyCardProps {
   getIcon: (exp: any) => React.ReactNode;
 }
 
+const CompanyLogo = ({ src, name }: { src?: string; name?: string }) => {
+  const [failed, setFailed] = useState(false);
+
+  useEffect(() => {
+    setFailed(false);
+  }, [src]);
+
+  if (!src || failed) {
+    const initials = (name || '?')
+      .split(/\s+/)
+      .filter(Boolean)
+      .slice(0, 2)
+      .map((word) => word[0])
+      .join('')
+      .toUpperCase();
+
+    return (
+      <span className="text-sm sm:text-base font-black tracking-wide text-[#d946ef]/80">
+        {initials || '?'}
+      </span>
+    );
+  }
+
+  return (
+    <img
+      src={src}
+      alt={name || 'Company logo'}
+      onError={() => setFailed(true)}
+      className="w-full h-full object-contain filter brightness-95 group-hover:brightness-100 group-hover:scale-105 transition-all duration-300"
+    />
+  );
+};
+
 const CompanyCard = ({ exp, idx, inView, getLogoSrc, getIcon }: CompanyCardProps) => {
   const [tilt, setTilt] = useState({ x: 0, y: 0 });
   const [spotlight, setSpotlight] = useState({ x: 0, y: 0 });
@@ -66,11 +99,7 @@ const CompanyCard = ({ exp, idx, inView, getLogoSrc, getIcon }: CompanyCardProps
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
           <div className="flex items-center gap-3.5">
             <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-2xl bg-black/40 border border-white/10 p-2 flex items-center justify-center overflow-hidden flex-shrink-0 group-hover:border-white/20 transition-all duration-300 shadow-[0_0_12px_rgba(0,0,0,0.3)]">
-              <img
-                src={getLogoSrc(exp.logo)}
-                alt={exp.company}
-                className="w-full h-full object-contain filter brightness-95 group-hover:brightness-100 group-hover:scale-105 transition-all duration-300"
-              />
+              <CompanyLogo src={getLogoSrc(exp.logo)} name={exp.company} />
             </div>
             <div>
               <h4 className="text-base sm:text-lg font-black uppercase tracking-tight text-white/95 group-hover:text-white transition-all duration-300">

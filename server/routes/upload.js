@@ -1,29 +1,16 @@
 import express from 'express';
 import multer from 'multer';
 import path from 'path';
-import fs from 'fs';
 import auth from '../middleware/auth.js';
+import Upload from '../models/Upload.js';
 
 const router = express.Router();
 
-// Ensure uploads folder exists
-const uploadDir = 'server/uploads/';
-if (!fs.existsSync(uploadDir)) {
-  fs.mkdirSync(uploadDir, { recursive: true });
-}
-
-const storage = multer.diskStorage({
-  destination: (req, file, cb) => {
-    cb(null, uploadDir);
-  },
-  filename: (req, file, cb) => {
-    const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
-    cb(null, uniqueSuffix + path.extname(file.originalname));
-  }
-});
-
+// Store files in memory so they can be persisted in MongoDB.
+// The hosting filesystem (e.g. Render) is ephemeral and wipes local uploads
+// on every restart/redeploy, which made logos disappear after a while.
 const upload = multer({
-  storage,
+  storage: multer.memoryStorage(),
   limits: { fileSize: 5 * 1024 * 1024 }, // 5MB limit
   fileFilter: (req, file, cb) => {
     const filetypes = /jpeg|jpg|png|webp|gif|pdf/i;
@@ -36,17 +23,27 @@ const upload = multer({
   }
 });
 
-// Single image upload route (Protected)
-router.post('/', auth, upload.single('image'), (req, res) => {
+// Single file upload route (Protected)
+router.post('/', auth, upload.single('image'), async (req, res) => {
   try {
     if (!req.file) {
       return res.status(400).json({ message: 'No file uploaded' });
     }
-    
-    // Return relative URL for static serving
-    const fileUrl = `/uploads/${req.file.filename}`;
-    res.json({ url: fileUrl });
+
+    const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
+    const filename = uniqueSuffix + path.extname(req.file.originalname).toLowerCase();
+
+    await Upload.create({
+      filename,
+      contentType: req.file.mimetype,
+      size: req.file.size,
+      data: req.file.buffer
+    });
+
+    // Same URL shape as before so existing stored paths keep working.
+    res.json({ url: `/uploads/${filename}` });
   } catch (error) {
+    console.error('Error in POST /api/upload:', error);
     res.status(500).json({ message: error.message });
   }
 });

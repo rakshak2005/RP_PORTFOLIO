@@ -49,7 +49,7 @@ npm run dev:all
 ## 🛠️ Tech Stack
 
 - **Frontend**: React (Vite), TypeScript, Tailwind CSS, Lucide icons, Radix UI (Shadcn primitives).
-- **Backend**: Node.js, Express, Multer (image uploads), JWT authentication.
+- **Backend**: Node.js, Express, Multer (image uploads stored in MongoDB), JWT authentication.
 - **Database**: MongoDB (via Mongoose ODM).
 - **Tooling**: Concurrently (multi-process developer running), ESLint.
 
@@ -63,8 +63,8 @@ npm run dev:all
 │   ├── middleware/          # JWT Auth guards & request parsers
 │   ├── models/              # MongoDB Mongoose schemas (Project, Skill, User, Hero, Company)
 │   ├── routes/              # Express API endpoints (/api/auth, /api/projects, etc.)
-│   ├── scripts/             # DB seeding scripts (seed.js)
-│   ├── uploads/             # Server-side uploaded assets
+│   ├── scripts/             # DB seeding & upload migration scripts
+│   ├── uploads/             # Legacy on-disk uploads (migrated to MongoDB)
 │   └── server.js            # Express server entry point
 ├── src/
 │   ├── assets/              # Inline images, logo, and JPEG headers
@@ -89,5 +89,5 @@ The main page highlights a clean selection of works. Clicking **Archive of all w
 ### 🛡️ Fully Protected Admin Console
 Navigate to `/admin/login` to manage your portfolio:
 - Add, update, hide, or delete skills and companies.
-- Upload project screenshots directly using standard drag-drop interfaces (handled by Multer server uploads).
+- Upload project screenshots directly using standard drag-drop interfaces. Uploads are stored in MongoDB, so they survive server restarts and redeploys.
 - Hide drafts or outdated creations from the front-end showcase using quick toggles.
